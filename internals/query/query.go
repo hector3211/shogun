@@ -7,6 +7,32 @@ import (
 	"strings"
 )
 
+func NewInsert(table interface{}) string {
+	t := reflect.TypeOf(table)
+
+	if t.Kind() != reflect.Struct {
+		return ""
+	}
+
+	tableName := strings.ToLower(t.Name())
+	query := "INSERT INTO " + tableName
+	var columnValues []interface{}
+	var columns []string
+	// fmt.Printf("Table name: %s\n", tableName)
+	for i := 0; i < t.NumField(); i++ {
+		value := t.Field(i)
+		ormTag := value.Tag.Get("orm")
+		columnValues = append(columnValues, value)
+		columns = append(columns, ormTag)
+
+	}
+	query += fmt.Sprintf(" (%s) ", strings.Join(columns, ","))
+	query += "VALUES "
+	query += "("
+
+	return query
+}
+
 // Generates a new table creation statement based on a struct and database driver.
 func GenerateNewTable(table interface{}, driver utils.Driver) string {
 	t := reflect.TypeOf(table)
@@ -34,9 +60,9 @@ func GenerateNewTable(table interface{}, driver utils.Driver) string {
 }
 
 // Generates a new SELECT statement based on struct and fields if any are recieved.
-func GenerateNewSelectStatement(table interface{}, fields []string) string {
+func GenerateNewSelectStatement(table string, fields ...string) string {
 	tableName := utils.GetTableName(table)
-	if len(fields) > 0 {
+	if fields != nil {
 		return fmt.Sprintf("SELECT (%s) FROM %s;", strings.Join(fields, ","), tableName)
 
 	}

@@ -53,7 +53,7 @@ func (o *Orm) CreateNewTable(table interface{}) error {
 }
 
 // NewSelectStatement genereate a new select query statement based on the table passed and fields to query.
-func (o *Orm) NewSelectStatement(table interface{}, fieldsSelectd []string) (*sql.Rows, error) {
+func (o *Orm) NewSelectStatement(table string, fieldsSelectd string) (*sql.Rows, error) {
 	query := query.GenerateNewSelectStatement(table, fieldsSelectd) // need the struct here
 	result, err := o.DB.Query(query)
 	// defer result.Close()

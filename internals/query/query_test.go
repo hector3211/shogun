@@ -35,12 +35,7 @@ func TestSelectStatement(t *testing.T) {
 		query = "SELECT * FROM userstest;"
 	}
 
-	userOne := UsersTest{
-		ID:   0,
-		Name: "hector",
-	}
-
-	resultQuery := GenerateNewSelectStatement(userOne, fields)
+	resultQuery := GenerateNewSelectStatement("userstest", "id,name")
 
 	if resultQuery != query {
 		t.Fatalf("failed! Select querys dont match up!")
