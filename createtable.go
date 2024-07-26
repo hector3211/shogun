@@ -7,7 +7,7 @@ import (
 
 type CreateTableBuilder struct {
 	Driver
-	Verb        string
+	Action      string
 	ifNotExists bool
 	Name        string
 	Columns     [][]string
@@ -16,7 +16,7 @@ type CreateTableBuilder struct {
 func NewCreateTableBuilder() *CreateTableBuilder {
 	return &CreateTableBuilder{
 		Driver:      DefaultDriver,
-		Verb:        "CREATE TABLE",
+		Action:      "CREATE TABLE",
 		ifNotExists: false,
 	}
 }
@@ -36,12 +36,13 @@ func (ct *CreateTableBuilder) Define(val ...string) *CreateTableBuilder {
 	return ct
 }
 
+// TODO: use stringbuilder here
 func (ct *CreateTableBuilder) String() string {
 	var stmt string
 	if ct.ifNotExists {
-		stmt += fmt.Sprintf("%s IF NOT EXISTS %s ", ct.Verb, ct.Name)
+		stmt += fmt.Sprintf("%s IF NOT EXISTS %s ", ct.Action, ct.Name)
 	} else {
-		stmt += fmt.Sprintf("%s %s", ct.Verb, ct.Name)
+		stmt += fmt.Sprintf("%s %s ", ct.Action, ct.Name)
 	}
 	if len(ct.Columns) > 0 {
 		stmt += "("

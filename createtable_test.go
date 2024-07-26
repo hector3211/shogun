@@ -2,7 +2,7 @@ package shogun
 
 import "testing"
 
-func TestCt(t *testing.T) {
+func TestCreateTable(t *testing.T) {
 	query := "CREATE TABLE IF NOT EXISTS users (id INT NOT NULL PRIMARY KEY,name TEXT NOT NULL);"
 	ct := NewCreateTableBuilder().
 		CreaetTable("users").
@@ -16,7 +16,7 @@ func TestCt(t *testing.T) {
 	}
 }
 
-func TestCtTwo(t *testing.T) {
+func TestCreateTableTwo(t *testing.T) {
 	query := "CREATE TABLE IF NOT EXISTS users (id INT NOT NULL PRIMARY KEY);"
 	ct := NewCreateTableBuilder().
 		CreaetTable("users").
@@ -25,6 +25,18 @@ func TestCtTwo(t *testing.T) {
 		String()
 
 	if ct != query {
-		t.Fatalf("failed! testCtTwo wanted: %s, got %s", query, ct)
+		t.Fatalf("TestCreateTableTwo failed wanted: %s, got %s", query, ct)
+	}
+}
+
+func TestCreateTableThree(t *testing.T) {
+	query := "CREATE TABLE users (id INT NOT NULL PRIMARY KEY);"
+	ct := NewCreateTableBuilder().
+		CreaetTable("users").
+		Define("id", "INT", "NOT NULL", "PRIMARY KEY").
+		String()
+
+	if ct != query {
+		t.Fatalf("TestCreateTableThree failed wanted: %s, got %s", query, ct)
 	}
 }
