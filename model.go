@@ -2,8 +2,8 @@ package shogun
 
 import (
 	"fmt"
-	"ormer/utils"
 	"reflect"
+	"shogun/utils"
 	"strings"
 )
 

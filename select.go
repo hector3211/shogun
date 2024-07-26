@@ -4,14 +4,15 @@ import "strings"
 
 type SelectBuilder struct {
 	Driver
-	Tables []string
+	Tables [][]string
 	Args   [][]string
 	Where  *string
 }
 
 func NewCreateSelectBuilder() *SelectBuilder {
 	return &SelectBuilder{
-		Tables: make([]string, 0),
+		Driver: DefaultDriver,
+		Tables: make([][]string, 0),
 		Args:   make([][]string, 0),
 	}
 }
@@ -22,7 +23,7 @@ func (s *SelectBuilder) Select(columns ...string) *SelectBuilder {
 }
 
 func (s *SelectBuilder) From(table ...string) *SelectBuilder {
-	s.Tables = table
+	s.Tables = append(s.Tables, table)
 	return s
 }
 
@@ -30,28 +31,34 @@ func (s *SelectBuilder) Build() string {
 	buf := newStringBuilder()
 	buf.WriteLeadingString("SELECT ")
 
-	if len(s.Args) > 0 {
+	if len(s.Args[0]) > 1 {
 		buf.WriteString("(")
 		for _, field := range s.Args {
 			buf.WriteString(strings.Join(field, ","))
 		}
-		buf.WriteLeadingString(") ")
+		buf.WriteString(")")
 	} else {
-		buf.WriteLeadingString("* ")
+		if strings.Join(s.Args[0], "") != "*" {
+			buf.WriteString("(")
+			for _, field := range s.Args {
+				buf.WriteString(strings.Join(field, ","))
+			}
+			buf.WriteString(")")
+		} else {
+			buf.WriteString("*")
+		}
 	}
 
 	buf.WriteLeadingString("FROM ")
 
-	if len(s.Tables) > 0 {
+	if len(s.Tables[0]) > 1 {
 		buf.WriteString("(")
-		for i := 0; i < len(s.Tables); i++ {
-			table := s.Tables[i]
-			buf.WriteString(table)
-			if i < len(s.Tables)-1 {
-				buf.WriteString(",")
-			}
+		for _, table := range s.Tables {
+			buf.WriteString(strings.Join(table, ","))
 		}
-		buf.WriteLeadingString(") ")
+		buf.WriteString(")")
+	} else {
+		buf.WriteString(strings.Join(s.Tables[0], ""))
 	}
 
 	buf.WriteString(";")

@@ -2,8 +2,8 @@ package query
 
 import (
 	"fmt"
-	"ormer/utils"
 	"reflect"
+	"shogun/utils"
 	"strings"
 )
 

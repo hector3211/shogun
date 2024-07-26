@@ -1,4 +1,4 @@
-module ormer
+module shogun
 
 go 1.22.0
 

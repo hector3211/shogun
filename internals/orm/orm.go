@@ -5,9 +5,9 @@ import (
 	"fmt"
 	_ "github.com/lib/pq"
 	_ "github.com/mattn/go-sqlite3"
-	"ormer/internals/query"
-	"ormer/utils"
 	"reflect"
+	"shogun/internals/query"
+	"shogun/utils"
 	"strings"
 )
 

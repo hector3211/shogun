@@ -2,7 +2,7 @@ package query
 
 import (
 	"fmt"
-	"ormer/utils"
+	"shogun/utils"
 	"testing"
 )
 
