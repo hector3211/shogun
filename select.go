@@ -1,12 +1,15 @@
 package shogun
 
-import "strings"
+import (
+	"fmt"
+	"strings"
+)
 
 type SelectBuilder struct {
 	Driver
-	Tables [][]string
-	Args   [][]string
-	Where  *string
+	Tables   [][]string
+	Args     [][]string
+	WhereArg string
 }
 
 func NewCreateSelectBuilder() *SelectBuilder {
@@ -24,6 +27,16 @@ func (s *SelectBuilder) Select(columns ...string) *SelectBuilder {
 
 func (s *SelectBuilder) From(table ...string) *SelectBuilder {
 	s.Tables = append(s.Tables, table)
+	return s
+}
+
+func (s *SelectBuilder) Where(target string) *SelectBuilder {
+	s.WhereArg = target
+	return s
+}
+
+func (s *SelectBuilder) Equal(condition string) *SelectBuilder {
+	s.WhereArg = fmt.Sprintf("%s %s '%s'", s.WhereArg, "=", condition)
 	return s
 }
 
@@ -59,6 +72,11 @@ func (s *SelectBuilder) Build() string {
 		buf.WriteString(")")
 	} else {
 		buf.WriteString(strings.Join(s.Tables[0], ""))
+	}
+
+	if ok := s.WhereArg; ok != "" {
+		buf.WriteLeadingString("WHERE ")
+		buf.WriteString(s.WhereArg)
 	}
 
 	buf.WriteString(";")

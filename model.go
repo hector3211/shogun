@@ -7,15 +7,14 @@ import (
 	"strings"
 )
 
-type Model struct {
-	ModelType reflect.Type
-	Name      string
-	OrmTags   []string
+type ModelBuilder struct {
+	Name    string
+	Columns [][]string
 }
 
-var emptyModel Model
+var emptyModel ModelBuilder
 
-func NewModel(table interface{}) *Model {
+func NewModel(table interface{}) *ModelBuilder {
 	t := reflect.TypeOf(table)
 	tableName := strings.ToLower(t.Name())
 
@@ -23,7 +22,7 @@ func NewModel(table interface{}) *Model {
 		return &emptyModel
 	}
 
-	var columnTags []string
+	var columnTags [][]string
 	// fmt.Printf("Table name: %s\n", tableName)
 	for i := 0; i < t.NumField(); i++ {
 		field := t.Field(i)
@@ -31,15 +30,14 @@ func NewModel(table interface{}) *Model {
 		sqlType := utils.ToSqlTypes(field.Type.Name())
 
 		if ormTag == "id" {
-			columnTags = append(columnTags, fmt.Sprintf("%s %s", ormTag, utils.PRIMARYKEY))
+			columnTags = append(columnTags, []string{fmt.Sprintf("%s %s", ormTag, utils.PRIMARYKEY)})
 		} else {
-			columnTags = append(columnTags, fmt.Sprintf("%s %s", ormTag, sqlType))
+			columnTags = append(columnTags, []string{fmt.Sprintf("%s %s", ormTag, sqlType)})
 		}
 	}
 
-	return &Model{
-		ModelType: t,
-		Name:      tableName,
-		OrmTags:   columnTags,
+	return &ModelBuilder{
+		Name:    tableName,
+		Columns: columnTags,
 	}
 }

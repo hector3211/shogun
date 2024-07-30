@@ -39,3 +39,12 @@ func TestSelectMultipleTables(t *testing.T) {
 		t.Fatalf("TestSelectMultipleTables failed wanted %s got %s", query, stmt)
 	}
 }
+
+func TestSelectWithWhere(t *testing.T) {
+	query := `SELECT (id,name) FROM users WHERE name = 'hector';`
+	stmt := NewCreateSelectBuilder().Select("id", "name").From("users").Where("name").Equal("hector").Build()
+
+	if stmt != query {
+		t.Fatalf("TestSelectMultipleTables failed wanted %s got %s", query, stmt)
+	}
+}
