@@ -21,40 +21,40 @@ func NewCreateTableBuilder() *CreateTableBuilder {
 	}
 }
 
-func (ct *CreateTableBuilder) CreaetTable(tableName string) *CreateTableBuilder {
-	ct.Name = tableName
-	return ct
+func (c *CreateTableBuilder) CreaetTable(tableName string) *CreateTableBuilder {
+	c.Name = tableName
+	return c
 }
 
-func (ct *CreateTableBuilder) IfNotExists() *CreateTableBuilder {
-	ct.ifNotExists = true
-	return ct
+func (c *CreateTableBuilder) IfNotExists() *CreateTableBuilder {
+	c.ifNotExists = true
+	return c
 }
 
-func (ct *CreateTableBuilder) Define(val ...string) *CreateTableBuilder {
-	ct.Columns = append(ct.Columns, val)
-	return ct
+func (c *CreateTableBuilder) Define(val ...string) *CreateTableBuilder {
+	c.Columns = append(c.Columns, val)
+	return c
 }
 
-// TODO: use stringbuilder here
-func (ct *CreateTableBuilder) String() string {
-	var stmt string
-	if ct.ifNotExists {
-		stmt += fmt.Sprintf("%s IF NOT EXISTS %s ", ct.Action, ct.Name)
+func (c *CreateTableBuilder) String() string {
+	buf := newStringBuilder()
+	if c.ifNotExists {
+		buf.WriteLeadingString(fmt.Sprintf("%s ", c.Action))
+		buf.WriteString(fmt.Sprintf("IF NOT EXISTS %s ", c.Name))
 	} else {
-		stmt += fmt.Sprintf("%s %s ", ct.Action, ct.Name)
+		buf.WriteString(fmt.Sprintf("%s %s ", c.Action, c.Name))
 	}
-	if len(ct.Columns) > 0 {
-		stmt += "("
-		for i := 0; i < len(ct.Columns); i++ {
-			col := ct.Columns[i]
-			stmt += strings.Join(col, " ")
-			if i != len(ct.Columns)-1 {
-				stmt += ","
+	if len(c.Columns) > 0 {
+		buf.WriteString("(")
+		for i := 0; i < len(c.Columns); i++ {
+			col := c.Columns[i]
+			buf.WriteString(strings.Join(col, " "))
+			if i != len(c.Columns)-1 {
+				buf.WriteString(",")
 			}
 		}
-		stmt += ")"
+		buf.WriteString(")")
 	}
-	stmt += ";"
-	return stmt
+	buf.WriteString(";")
+	return buf.builder.String()
 }
