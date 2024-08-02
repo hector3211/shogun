@@ -40,9 +40,64 @@ func TestSelectMultipleTables(t *testing.T) {
 	}
 }
 
-func TestSelectWithWhere(t *testing.T) {
+func TestSelectWithWhereCondition(t *testing.T) {
 	query := `SELECT (id,name) FROM users WHERE name = 'hector';`
-	stmt := NewCreateSelectBuilder().Select("id", "name").From("users").Where("name").Equal("hector").Build()
+	stmt := NewCreateSelectBuilder().
+		Select("id", "name").
+		From("users").
+		Where(
+			Equal("name", "hector"),
+		).
+		Build()
+
+	if stmt != query {
+		t.Fatalf("TestSelectMultipleTables failed wanted %s got %s", query, stmt)
+	}
+}
+
+func TestSelectWithWhereConditionTwo(t *testing.T) {
+	query := `SELECT (id,name) FROM users WHERE name != 'hector';`
+	stmt := NewCreateSelectBuilder().
+		Select("id", "name").
+		From("users").
+		Where(
+			NotEqual("name", "hector"),
+		).
+		Build()
+
+	if stmt != query {
+		t.Fatalf("TestSelectMultipleTables failed wanted %s got %s", query, stmt)
+	}
+}
+
+func TestSelectWithAnd(t *testing.T) {
+	query := `SELECT (id,name) FROM users WHERE name = 'hector' AND id < 10;`
+	stmt := NewCreateSelectBuilder().
+		Select("id", "name").
+		From("users").
+		Where(
+			Equal("name", "hector"),
+			And(),
+			LessThan("id", 10),
+		).
+		Build()
+
+	if stmt != query {
+		t.Fatalf("TestSelectMultipleTables failed wanted %s got %s", query, stmt)
+	}
+}
+
+func TestSelectWithOr(t *testing.T) {
+	query := `SELECT (id,name) FROM users WHERE name = 'hector' OR id > 10;`
+	stmt := NewCreateSelectBuilder().
+		Select("id", "name").
+		From("users").
+		Where(
+			Equal("name", "hector"),
+			Or(),
+			GreaterThan("id", 10),
+		).
+		Build()
 
 	if stmt != query {
 		t.Fatalf("TestSelectMultipleTables failed wanted %s got %s", query, stmt)
