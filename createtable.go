@@ -58,3 +58,26 @@ func (c *CreateTableBuilder) String() string {
 	buf.WriteString(";")
 	return buf.builder.String()
 }
+
+func (c *CreateTableBuilder) Build() string {
+	buf := newStringBuilder()
+	if c.ifNotExists {
+		buf.WriteLeadingString(fmt.Sprintf("%s ", c.Action))
+		buf.WriteString(fmt.Sprintf("IF NOT EXISTS %s ", c.Name))
+	} else {
+		buf.WriteString(fmt.Sprintf("%s %s ", c.Action, c.Name))
+	}
+	if len(c.Columns) > 0 {
+		buf.WriteString("(")
+		for i := 0; i < len(c.Columns); i++ {
+			col := c.Columns[i]
+			buf.WriteString(strings.Join(col, " "))
+			if i != len(c.Columns)-1 {
+				buf.WriteString(",")
+			}
+		}
+		buf.WriteString(")")
+	}
+	buf.WriteString(";")
+	return buf.builder.String()
+}

@@ -5,7 +5,7 @@ import "testing"
 func TestSelectOne(t *testing.T) {
 	query := "SELECT * FROM users;"
 
-	stmt := NewCreateSelectBuilder().Select("*").From("users").Build()
+	stmt := NewSelectBuilder().Select("*").From("users").Build()
 	// t.Fatalf("length: %d", len(stmt.Args))
 
 	if stmt != query {
@@ -15,7 +15,7 @@ func TestSelectOne(t *testing.T) {
 
 func TestSelect(t *testing.T) {
 	query := "SELECT (id) FROM users;"
-	stmt := NewCreateSelectBuilder().Select("id").From("users").Build()
+	stmt := NewSelectBuilder().Select("id").From("users").Build()
 
 	if stmt != query {
 		t.Fatalf("TestSelectTwo failed wanted %s got %s", query, stmt)
@@ -24,7 +24,7 @@ func TestSelect(t *testing.T) {
 
 func TestSelectMultipleFields(t *testing.T) {
 	query := "SELECT (id,name) FROM users;"
-	stmt := NewCreateSelectBuilder().Select("id,name").From("users").Build()
+	stmt := NewSelectBuilder().Select("id,name").From("users").Build()
 
 	if stmt != query {
 		t.Fatalf("TestSelectTwo failed wanted %s got %s", query, stmt)
@@ -33,7 +33,7 @@ func TestSelectMultipleFields(t *testing.T) {
 
 func TestSelectMultipleTables(t *testing.T) {
 	query := "SELECT (id,name) FROM (users,products);"
-	stmt := NewCreateSelectBuilder().Select("id", "name").From("users", "products").Build()
+	stmt := NewSelectBuilder().Select("id", "name").From("users", "products").Build()
 
 	if stmt != query {
 		t.Fatalf("TestSelectMultipleTables failed wanted %s got %s", query, stmt)
@@ -42,7 +42,7 @@ func TestSelectMultipleTables(t *testing.T) {
 
 func TestSelectWithWhereCondition(t *testing.T) {
 	query := `SELECT (id,name) FROM users WHERE name = 'hector';`
-	stmt := NewCreateSelectBuilder().
+	stmt := NewSelectBuilder().
 		Select("id", "name").
 		From("users").
 		Where(
@@ -57,7 +57,7 @@ func TestSelectWithWhereCondition(t *testing.T) {
 
 func TestSelectWithWhereConditionTwo(t *testing.T) {
 	query := `SELECT (id,name) FROM users WHERE name != 'hector';`
-	stmt := NewCreateSelectBuilder().
+	stmt := NewSelectBuilder().
 		Select("id", "name").
 		From("users").
 		Where(
@@ -72,7 +72,7 @@ func TestSelectWithWhereConditionTwo(t *testing.T) {
 
 func TestSelectWithAnd(t *testing.T) {
 	query := `SELECT (id,name) FROM users WHERE name = 'hector' AND id < 10;`
-	stmt := NewCreateSelectBuilder().
+	stmt := NewSelectBuilder().
 		Select("id", "name").
 		From("users").
 		Where(
@@ -89,7 +89,7 @@ func TestSelectWithAnd(t *testing.T) {
 
 func TestSelectWithOr(t *testing.T) {
 	query := `SELECT (id,name) FROM users WHERE name = 'hector' OR id > 10;`
-	stmt := NewCreateSelectBuilder().
+	stmt := NewSelectBuilder().
 		Select("id", "name").
 		From("users").
 		Where(

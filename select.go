@@ -11,11 +11,9 @@ type SelectBuilder struct {
 	Tables     [][]string
 	Fields     [][]string
 	WhereConds [][]string
-	And        bool
-	Or         bool
 }
 
-func NewCreateSelectBuilder() *SelectBuilder {
+func NewSelectBuilder() *SelectBuilder {
 	return &SelectBuilder{
 		Driver:     DefaultDriver,
 		Tables:     make([][]string, 0),
@@ -112,11 +110,15 @@ func GreaterThan(field string, value interface{}) string {
 }
 
 func And() string {
-	return "AND"
+	buf := newStringBuilder()
+	buf.WriteString("AND")
+	return buf.String()
 }
 
 func Or() string {
-	return "OR"
+	buf := newStringBuilder()
+	buf.WriteString("OR")
+	return buf.String()
 }
 
 func (s *SelectBuilder) Build() string {
@@ -162,5 +164,5 @@ func (s *SelectBuilder) Build() string {
 
 	buf.WriteString(";")
 
-	return buf.builder.String()
+	return buf.String()
 }
