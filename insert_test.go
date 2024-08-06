@@ -21,3 +21,13 @@ func TestInsertDouble(t *testing.T) {
 		t.Fatalf("TestinsertDouble failed, wanted %s got %s", query, insertQuery)
 	}
 }
+
+func TestInsertBool(t *testing.T) {
+	query := "INSERT INTO users (name,age,email_verified) VALUES ('maddog',20,TRUE);"
+
+	insertQuery := NewInsertBuilder().Table("users").Cols("name", "age", "email_verified").Vals("maddog", 20, true).Build()
+
+	if insertQuery != query {
+		t.Fatalf("TestinsertDouble failed, wanted %s got %s", query, insertQuery)
+	}
+}

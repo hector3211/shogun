@@ -8,27 +8,27 @@ import (
 
 type SelectBuilder struct {
 	Driver
-	Tables     [][]string
-	Fields     [][]string
+	Tables     []string
+	Fields     []string
 	WhereConds [][]string
 }
 
 func NewSelectBuilder() *SelectBuilder {
 	return &SelectBuilder{
 		Driver:     DefaultDriver,
-		Tables:     make([][]string, 0),
-		Fields:     make([][]string, 0),
+		Tables:     make([]string, 0),
+		Fields:     make([]string, 0),
 		WhereConds: make([][]string, 0),
 	}
 }
 
 func (s *SelectBuilder) Select(columns ...string) *SelectBuilder {
-	s.Fields = append(s.Fields, columns)
+	s.Fields = columns
 	return s
 }
 
-func (s *SelectBuilder) From(table ...string) *SelectBuilder {
-	s.Tables = append(s.Tables, table)
+func (s *SelectBuilder) From(tables ...string) *SelectBuilder {
+	s.Tables = tables
 	return s
 }
 
@@ -74,35 +74,29 @@ func NotEqual(field string, value interface{}) string {
 }
 
 func LessThan(field string, value interface{}) string {
-	t := reflect.TypeOf(value)
 	var lessThanStatement string
 
-	theType := t.Kind()
-	switch theType {
-	case reflect.Int:
+	switch value.(type) {
+	case int:
 		lessThanStatement = fmt.Sprintf("%s %s %v", field, "<", value)
-	case reflect.String:
+	case string:
 		lessThanStatement = fmt.Sprintf("%s %s '%s'", field, "<", value)
 	default:
 		// could be for bools, could be wrong
 		lessThanStatement = fmt.Sprintf("%s %s %v", field, "<", value)
 	}
-
 	return lessThanStatement
 }
 
 func GreaterThan(field string, value interface{}) string {
-	t := reflect.TypeOf(value)
 	var lessThanStatement string
 
-	theType := t.Kind()
-	switch theType {
-	case reflect.Int:
-		lessThanStatement = fmt.Sprintf("%s %s %v", field, ">", value)
-	case reflect.String:
+	switch value.(type) {
+	case int:
+		lessThanStatement = fmt.Sprintf("%s %s %d", field, ">", value)
+	case string:
 		lessThanStatement = fmt.Sprintf("%s %s '%s'", field, ">", value)
 	default:
-		// could be for bools, could be wrong
 		lessThanStatement = fmt.Sprintf("%s %s %v", field, ">", value)
 	}
 
@@ -125,19 +119,11 @@ func (s *SelectBuilder) Build() string {
 	buf := newStringBuilder()
 	buf.WriteLeadingString("SELECT ")
 
-	if len(s.Fields[0]) > 1 {
-		buf.WriteString("(")
-		for _, field := range s.Fields {
-			buf.WriteString(strings.Join(field, ","))
-		}
-		buf.WriteString(")")
+	if len(s.Fields) > 1 {
+		buf.WriteString(fmt.Sprintf("(%s)", strings.Join(s.Fields, ",")))
 	} else {
-		if strings.Join(s.Fields[0], "") != "*" {
-			buf.WriteString("(")
-			for _, field := range s.Fields {
-				buf.WriteString(strings.Join(field, ","))
-			}
-			buf.WriteString(")")
+		if s.Fields[0] != "*" {
+			buf.WriteString(fmt.Sprintf("(%s)", s.Fields[0]))
 		} else {
 			buf.WriteString("*")
 		}
@@ -145,14 +131,12 @@ func (s *SelectBuilder) Build() string {
 
 	buf.WriteLeadingString("FROM ")
 
-	if len(s.Tables[0]) > 1 {
+	if len(s.Tables) > 1 {
 		buf.WriteString("(")
-		for _, table := range s.Tables {
-			buf.WriteString(strings.Join(table, ","))
-		}
+		buf.WriteString(strings.Join(s.Tables, ","))
 		buf.WriteString(")")
 	} else {
-		buf.WriteString(strings.Join(s.Tables[0], ""))
+		buf.WriteString(s.Tables[0])
 	}
 
 	if len(s.WhereConds) > 0 {
