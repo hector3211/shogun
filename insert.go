@@ -42,7 +42,6 @@ func (i *InsertBuilder) Build() string {
 
 	buf.WriteString("(")
 	if len(i.Columns) > 1 {
-		// Yes LPAREN or RPAREN
 		buf.WriteString(strings.Join(i.Columns, ","))
 	} else {
 		buf.WriteString(i.Columns[0])
