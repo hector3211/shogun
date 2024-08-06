@@ -2,7 +2,6 @@ package shogun
 
 import (
 	"fmt"
-	"reflect"
 	"strings"
 )
 
@@ -38,17 +37,14 @@ func (s *SelectBuilder) Where(conditions ...string) *SelectBuilder {
 }
 
 func Equal(field string, value interface{}) string {
-	t := reflect.TypeOf(value)
 	var eqStatement string
 
-	theType := t.Kind()
-	switch theType {
-	case reflect.Int:
+	switch value.(type) {
+	case int:
 		eqStatement = fmt.Sprintf("%s %s %v", field, "=", value)
-	case reflect.String:
+	case string:
 		eqStatement = fmt.Sprintf("%s %s '%s'", field, "=", value)
 	default:
-		// could be for bools, could be wrong
 		eqStatement = fmt.Sprintf("%s %s %v", field, "=", value)
 	}
 
@@ -56,17 +52,14 @@ func Equal(field string, value interface{}) string {
 }
 
 func NotEqual(field string, value interface{}) string {
-	t := reflect.TypeOf(value)
 	var eqStatement string
 
-	theType := t.Kind()
-	switch theType {
-	case reflect.Int:
+	switch value.(type) {
+	case int:
 		eqStatement = fmt.Sprintf("%s %s %v", field, "!=", value)
-	case reflect.String:
+	case string:
 		eqStatement = fmt.Sprintf("%s %s '%s'", field, "!=", value)
 	default:
-		// could be for bools, could be wrong
 		eqStatement = fmt.Sprintf("%s %s %v", field, "!=", value)
 	}
 
@@ -82,7 +75,6 @@ func LessThan(field string, value interface{}) string {
 	case string:
 		lessThanStatement = fmt.Sprintf("%s %s '%s'", field, "<", value)
 	default:
-		// could be for bools, could be wrong
 		lessThanStatement = fmt.Sprintf("%s %s %v", field, "<", value)
 	}
 	return lessThanStatement
