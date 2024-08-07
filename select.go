@@ -124,9 +124,7 @@ func (s *SelectBuilder) Build() string {
 	buf.WriteLeadingString("FROM ")
 
 	if len(s.Tables) > 1 {
-		buf.WriteString("(")
-		buf.WriteString(strings.Join(s.Tables, ","))
-		buf.WriteString(")")
+		buf.WriteString(fmt.Sprintf("(%s)", strings.Join(s.Tables, ",")))
 	} else {
 		buf.WriteString(s.Tables[0])
 	}
