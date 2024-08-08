@@ -1,5 +1,10 @@
 package shogun
 
+import (
+	"fmt"
+	"strings"
+)
+
 type UpdateBuilder struct {
 	Action    string
 	Table     string
@@ -26,4 +31,28 @@ func (u *UpdateBuilder) Set(values ...interface{}) *UpdateBuilder {
 func (u *UpdateBuilder) Where(conditions ...interface{}) *UpdateBuilder {
 	u.WhereCond = append(u.WhereCond, conditions)
 	return u
+}
+
+func (u *UpdateBuilder) Build() string {
+	buf := newStringBuilder()
+	buf.WriteLeadingString(fmt.Sprintf("%s ", u.Action))
+
+	//NOTE:  Not sure about this double for loop
+	for _, setCond := range u.SetCond {
+		var set string
+		for _, token := range setCond {
+			switch token.(type) {
+			case string:
+				set += fmt.Sprintf("%s", token)
+			case int:
+				set += fmt.Sprintf("%d", token)
+			case float32:
+				set += fmt.Sprintf("%f", token)
+			case bool:
+				set += strings.ToUpper(fmt.Sprintf("%v", token))
+			}
+		}
+	}
+
+	return buf.String()
 }
