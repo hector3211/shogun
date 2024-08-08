@@ -13,7 +13,7 @@ func TestSelectOne(t *testing.T) {
 	}
 }
 
-func TestSelect(t *testing.T) {
+func TestSelectTwo(t *testing.T) {
 	query := "SELECT (id) FROM users;"
 	stmt := NewSelectBuilder().Select("id").From("users").Build()
 
@@ -22,25 +22,25 @@ func TestSelect(t *testing.T) {
 	}
 }
 
-func TestSelectMultipleFields(t *testing.T) {
+func TestSelectThree(t *testing.T) {
 	query := "SELECT (id,name) FROM users;"
 	stmt := NewSelectBuilder().Select("id,name").From("users").Build()
 
 	if stmt != query {
-		t.Fatalf("TestSelectTwo failed wanted %s got %s", query, stmt)
+		t.Fatalf("TestSelectThree failed wanted %s got %s", query, stmt)
 	}
 }
 
-func TestSelectMultipleTables(t *testing.T) {
+func TestSelectFour(t *testing.T) {
 	query := "SELECT (id,name) FROM (users,products);"
 	stmt := NewSelectBuilder().Select("id", "name").From("users", "products").Build()
 
 	if stmt != query {
-		t.Fatalf("TestSelectMultipleTables failed wanted %s got %s", query, stmt)
+		t.Fatalf("TestSelectFour failed wanted %s got %s", query, stmt)
 	}
 }
 
-func TestSelectWithWhereCondition(t *testing.T) {
+func TestSelectFive(t *testing.T) {
 	query := `SELECT (id,name) FROM users WHERE name = 'hector';`
 	stmt := NewSelectBuilder().
 		Select("id", "name").
@@ -51,11 +51,11 @@ func TestSelectWithWhereCondition(t *testing.T) {
 		Build()
 
 	if stmt != query {
-		t.Fatalf("TestSelectMultipleTables failed wanted %s got %s", query, stmt)
+		t.Fatalf("TestSelectFive failed wanted %s got %s", query, stmt)
 	}
 }
 
-func TestSelectWithWhereConditionTwo(t *testing.T) {
+func TestSelectWitNotEqual(t *testing.T) {
 	query := `SELECT (id,name) FROM users WHERE name != 'hector';`
 	stmt := NewSelectBuilder().
 		Select("id", "name").
@@ -66,7 +66,7 @@ func TestSelectWithWhereConditionTwo(t *testing.T) {
 		Build()
 
 	if stmt != query {
-		t.Fatalf("TestSelectMultipleTables failed wanted %s got %s", query, stmt)
+		t.Fatalf("TestSelectWitNotEqual failed wanted %s got %s", query, stmt)
 	}
 }
 
@@ -83,7 +83,7 @@ func TestSelectWithAnd(t *testing.T) {
 		Build()
 
 	if stmt != query {
-		t.Fatalf("TestSelectMultipleTables failed wanted %s got %s", query, stmt)
+		t.Fatalf("TestSelectWithAnd failed wanted %s got %s", query, stmt)
 	}
 }
 
@@ -100,6 +100,8 @@ func TestSelectWithOr(t *testing.T) {
 		Build()
 
 	if stmt != query {
-		t.Fatalf("TestSelectMultipleTables failed wanted %s got %s", query, stmt)
+		t.Fatalf("TestSelectWithOr failed wanted %s got %s", query, stmt)
 	}
 }
+
+// TODO: run a test with bool values

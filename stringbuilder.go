@@ -12,17 +12,17 @@ func newStringBuilder() *StringBuilder {
 	}
 }
 
-func (sb *StringBuilder) WriteLeadingString(s string) {
-	if sb.builder.Len() > 0 {
-		sb.builder.WriteString(" ")
+func (s *StringBuilder) WriteLeadingString(str string) {
+	if s.builder.Len() > 0 && s.builder.String()[len(s.builder.String())-1] != ' ' {
+		s.builder.WriteString(" ")
 	}
-	sb.builder.WriteString(s)
+	s.builder.WriteString(str)
 }
 
-func (sb *StringBuilder) WriteString(s string) {
-	sb.builder.WriteString(s)
+func (s *StringBuilder) WriteString(str string) {
+	s.builder.WriteString(str)
 }
 
-func (sb *StringBuilder) String() string {
-	return sb.builder.String()
+func (s *StringBuilder) String() string {
+	return s.builder.String()
 }
