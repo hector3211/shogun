@@ -6,6 +6,7 @@ import (
 )
 
 type UpdateBuilder struct {
+	driver  Driver
 	action  string
 	table   string
 	setCond Conditions
@@ -13,6 +14,10 @@ type UpdateBuilder struct {
 }
 
 func NewUpdateBuilder() *UpdateBuilder {
+	return DefaultDriver.NewUpdateBuilder()
+}
+
+func newUpdateBuilder() *UpdateBuilder {
 	return &UpdateBuilder{
 		action: "UPDATE",
 	}
@@ -56,4 +61,13 @@ func (u *UpdateBuilder) Build() string {
 	}
 	buf.WriteString(";")
 	return buf.String()
+}
+
+func (s *UpdateBuilder) SetDriver(sqlDriver Driver) *UpdateBuilder {
+	s.driver = sqlDriver
+	return s
+}
+
+func (s UpdateBuilder) GetDriver() Driver {
+	return s.driver
 }

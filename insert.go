@@ -6,6 +6,7 @@ import (
 )
 
 type InsertBuilder struct {
+	driver    Driver
 	action    string
 	tableName string
 	columns   []string
@@ -14,6 +15,10 @@ type InsertBuilder struct {
 
 // Creates a new instance of the InsertBuilder struct
 func NewInsertBuilder() *InsertBuilder {
+	return DefaultDriver.NewInsertBuilder()
+}
+
+func newInsertBuilder() *InsertBuilder {
 	return &InsertBuilder{
 		action:  "INSERT",
 		columns: make([]string, 0),
@@ -38,6 +43,10 @@ func (i *InsertBuilder) Cols(columns ...string) *InsertBuilder {
 func (i *InsertBuilder) Vals(values ...interface{}) *InsertBuilder {
 	i.values = values
 	return i
+}
+
+func (i InsertBuilder) String() string {
+	return i.Build()
 }
 
 func (i *InsertBuilder) Build() string {
@@ -77,4 +86,13 @@ func (i *InsertBuilder) Build() string {
 	buf.WriteString(";")
 
 	return buf.String()
+}
+
+func (i *InsertBuilder) SetDriver(sqlDriver Driver) *InsertBuilder {
+	i.driver = sqlDriver
+	return i
+}
+
+func (i InsertBuilder) GetDriver() Driver {
+	return i.driver
 }

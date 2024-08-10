@@ -6,17 +6,21 @@ import (
 )
 
 type CreateTableBuilder struct {
-	Driver
-	Action      string
+	driver      Driver
+	action      string
 	ifNotExists bool
-	Name        string
-	Columns     [][]string
+	name        string
+	columns     [][]string
 }
 
 func NewCreateTableBuilder() *CreateTableBuilder {
+	return DefaultDriver.NewCreateBuilder()
+}
+
+func newCreateTableBuilder() *CreateTableBuilder {
 	return &CreateTableBuilder{
-		Driver:      DefaultDriver,
-		Action:      "CREATE TABLE",
+		driver:      DefaultDriver,
+		action:      "CREATE TABLE",
 		ifNotExists: false,
 	}
 }
@@ -26,7 +30,7 @@ func CreatTable(tableName string) *CreateTableBuilder {
 }
 
 func (c *CreateTableBuilder) CreateTable(tableName string) *CreateTableBuilder {
-	c.Name = tableName
+	c.name = tableName
 	return c
 }
 
@@ -36,24 +40,24 @@ func (c *CreateTableBuilder) IfNotExists() *CreateTableBuilder {
 }
 
 func (c *CreateTableBuilder) Define(val ...string) *CreateTableBuilder {
-	c.Columns = append(c.Columns, val)
+	c.columns = append(c.columns, val)
 	return c
 }
 
 func (c *CreateTableBuilder) String() string {
 	buf := newStringBuilder()
 	if c.ifNotExists {
-		buf.WriteLeadingString(fmt.Sprintf("%s ", c.Action))
-		buf.WriteString(fmt.Sprintf("IF NOT EXISTS %s ", c.Name))
+		buf.WriteLeadingString(fmt.Sprintf("%s ", c.action))
+		buf.WriteString(fmt.Sprintf("IF NOT EXISTS %s ", c.name))
 	} else {
-		buf.WriteString(fmt.Sprintf("%s %s ", c.Action, c.Name))
+		buf.WriteString(fmt.Sprintf("%s %s ", c.action, c.name))
 	}
-	if len(c.Columns) > 0 {
+	if len(c.columns) > 0 {
 		buf.WriteString("(")
-		for i := 0; i < len(c.Columns); i++ {
-			col := c.Columns[i]
+		for i := 0; i < len(c.columns); i++ {
+			col := c.columns[i]
 			buf.WriteString(strings.Join(col, " "))
-			if i != len(c.Columns)-1 {
+			if i != len(c.columns)-1 {
 				buf.WriteString(",")
 			}
 		}
@@ -66,17 +70,17 @@ func (c *CreateTableBuilder) String() string {
 func (c *CreateTableBuilder) Build() string {
 	buf := newStringBuilder()
 	if c.ifNotExists {
-		buf.WriteLeadingString(fmt.Sprintf("%s ", c.Action))
-		buf.WriteString(fmt.Sprintf("IF NOT EXISTS %s ", c.Name))
+		buf.WriteLeadingString(fmt.Sprintf("%s ", c.action))
+		buf.WriteString(fmt.Sprintf("IF NOT EXISTS %s ", c.name))
 	} else {
-		buf.WriteString(fmt.Sprintf("%s %s ", c.Action, c.Name))
+		buf.WriteString(fmt.Sprintf("%s %s ", c.action, c.name))
 	}
-	if len(c.Columns) > 0 {
+	if len(c.columns) > 0 {
 		buf.WriteString("(")
-		for i := 0; i < len(c.Columns); i++ {
-			col := c.Columns[i]
+		for i := 0; i < len(c.columns); i++ {
+			col := c.columns[i]
 			buf.WriteString(strings.Join(col, " "))
-			if i != len(c.Columns)-1 {
+			if i != len(c.columns)-1 {
 				buf.WriteString(",")
 			}
 		}
@@ -84,4 +88,13 @@ func (c *CreateTableBuilder) Build() string {
 	}
 	buf.WriteString(";")
 	return buf.builder.String()
+}
+
+func (c *CreateTableBuilder) SetDriver(sqlDriver Driver) *CreateTableBuilder {
+	c.driver = sqlDriver
+	return c
+}
+
+func (c CreateTableBuilder) GetDriver() Driver {
+	return c.driver
 }

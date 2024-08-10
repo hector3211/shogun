@@ -6,7 +6,7 @@ import (
 )
 
 type SelectBuilder struct {
-	Driver
+	driver      Driver
 	tables      []string
 	fields      []string
 	orderFields []string
@@ -16,8 +16,12 @@ type SelectBuilder struct {
 }
 
 func NewSelectBuilder() *SelectBuilder {
+	return DefaultDriver.NewSelectBuilder()
+}
+
+func newSelectbuilder() *SelectBuilder {
 	return &SelectBuilder{
-		Driver: DefaultDriver,
+		driver: DefaultDriver,
 		tables: make([]string, 0),
 		fields: make([]string, 0),
 		limit:  0,
@@ -113,4 +117,13 @@ func (s *SelectBuilder) Build() string {
 	buf.WriteString(";")
 
 	return buf.String()
+}
+
+func (s *SelectBuilder) SetDriver(sqlDriver Driver) *SelectBuilder {
+	s.driver = sqlDriver
+	return s
+}
+
+func (s SelectBuilder) GetDriver() Driver {
+	return s.driver
 }
