@@ -7,61 +7,107 @@ import (
 
 type SelectBuilder struct {
 	Driver
-	Tables []string
-	Fields []string
-	Conditions
+	tables      []string
+	fields      []string
+	orderFields []string
+	conditions  Conditions
+	limit       int
+	order       string
 }
 
 func NewSelectBuilder() *SelectBuilder {
 	return &SelectBuilder{
 		Driver: DefaultDriver,
-		Tables: make([]string, 0),
-		Fields: make([]string, 0),
+		tables: make([]string, 0),
+		fields: make([]string, 0),
+		limit:  0,
 	}
 }
 
+func Select(columns ...string) *SelectBuilder {
+	return NewSelectBuilder().Select(columns...)
+}
+
+func (s *SelectBuilder) TableNames() []string {
+	return s.tables
+}
+
 func (s *SelectBuilder) Select(columns ...string) *SelectBuilder {
-	s.Fields = columns
+	s.fields = columns
 	return s
 }
 
 func (s *SelectBuilder) From(tables ...string) *SelectBuilder {
-	s.Tables = tables
+	s.tables = tables
 	return s
 }
 
 func (s *SelectBuilder) Where(conditions ...string) *SelectBuilder {
-	s.Conditions = append(s.Conditions, conditions)
+	s.conditions = append(s.conditions, conditions)
 	return s
+}
+
+func (s *SelectBuilder) OrderBy(columns ...string) *SelectBuilder {
+	s.orderFields = columns
+	return s
+}
+
+func (s *SelectBuilder) Asc() *SelectBuilder {
+	s.order = "ASC"
+	return s
+}
+
+func (s *SelectBuilder) Desc() *SelectBuilder {
+	s.order = "DESC"
+	return s
+}
+
+func (s *SelectBuilder) Limit(number int) *SelectBuilder {
+	s.limit = number
+	return s
+}
+
+func (s *SelectBuilder) String() string {
+	return s.Build()
 }
 
 func (s *SelectBuilder) Build() string {
 	buf := newStringBuilder()
-	buf.WriteLeadingString("SELECT")
+	buf.WriteLeadingString("SELECT ")
 
-	if len(s.Fields) > 1 {
-		buf.WriteString(fmt.Sprintf(" (%s)", strings.Join(s.Fields, ",")))
+	if len(s.fields) > 1 {
+		buf.WriteString(fmt.Sprintf("(%s)", strings.Join(s.fields, ",")))
 	} else {
-		if s.Fields[0] != "*" {
-			buf.WriteString(fmt.Sprintf(" (%s)", s.Fields[0]))
+		if s.fields[0] != "*" {
+			buf.WriteString(fmt.Sprintf("(%s)", s.fields[0]))
 		} else {
-			buf.WriteString(fmt.Sprintf(" %s", "*"))
+			buf.WriteString(fmt.Sprintf("%s", "*"))
 		}
 	}
 
-	buf.WriteLeadingString("FROM")
+	buf.WriteLeadingString("FROM ")
 
-	if len(s.Tables) > 1 {
-		buf.WriteString(fmt.Sprintf(" (%s)", strings.Join(s.Tables, ",")))
+	if len(s.tables) > 1 {
+		buf.WriteString(fmt.Sprintf("(%s)", strings.Join(s.tables, ",")))
 	} else {
-		buf.WriteString(fmt.Sprintf(" %s", s.Tables[0]))
+		buf.WriteString(fmt.Sprintf("%s", s.tables[0]))
 	}
 
-	if len(s.Conditions) > 0 {
-		buf.WriteLeadingString("WHERE")
-		for _, args := range s.Conditions {
-			buf.WriteString(fmt.Sprintf(" %s", strings.Join(args, " ")))
+	if len(s.conditions) > 0 {
+		buf.WriteLeadingString("WHERE ")
+		for _, args := range s.conditions {
+			buf.WriteString(fmt.Sprintf("%s", strings.Join(args, " ")))
 		}
+	}
+
+	if len(s.orderFields) > 0 {
+		buf.WriteLeadingString("ORDER BY ")
+		buf.WriteString(fmt.Sprintf("%s %s", strings.Join(s.orderFields, " "), s.order))
+	}
+
+	if s.limit > 0 {
+		buf.WriteLeadingString("LIMIT ")
+		buf.WriteString(fmt.Sprintf("%d", s.limit))
 	}
 
 	buf.WriteString(";")

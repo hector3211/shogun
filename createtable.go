@@ -21,7 +21,11 @@ func NewCreateTableBuilder() *CreateTableBuilder {
 	}
 }
 
-func (c *CreateTableBuilder) CreaetTable(tableName string) *CreateTableBuilder {
+func CreatTable(tableName string) *CreateTableBuilder {
+	return NewCreateTableBuilder().CreateTable(tableName)
+}
+
+func (c *CreateTableBuilder) CreateTable(tableName string) *CreateTableBuilder {
 	c.Name = tableName
 	return c
 }

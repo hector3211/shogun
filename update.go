@@ -6,25 +6,29 @@ import (
 )
 
 type UpdateBuilder struct {
-	Action  string
-	Table   string
-	SetCond Conditions
+	action  string
+	table   string
+	setCond Conditions
 	Conditions
 }
 
 func NewUpdateBuilder() *UpdateBuilder {
 	return &UpdateBuilder{
-		Action: "UPDATE",
+		action: "UPDATE",
 	}
 }
 
+func Update(tableName string) *UpdateBuilder {
+	return NewUpdateBuilder().Update(tableName)
+}
+
 func (u *UpdateBuilder) Update(tableName string) *UpdateBuilder {
-	u.Table = tableName
+	u.table = tableName
 	return u
 }
 
 func (u *UpdateBuilder) Set(values ...string) *UpdateBuilder {
-	u.SetCond = append(u.SetCond, values)
+	u.setCond = append(u.setCond, values)
 	return u
 }
 
@@ -35,19 +39,19 @@ func (u *UpdateBuilder) Where(conditions ...string) *UpdateBuilder {
 
 func (u *UpdateBuilder) Build() string {
 	buf := newStringBuilder()
-	buf.WriteLeadingString(fmt.Sprintf("%s %s", u.Action, u.Table))
+	buf.WriteLeadingString(fmt.Sprintf("%s %s", u.action, u.table))
 
-	if len(u.SetCond) > 0 {
-		buf.WriteLeadingString("SET")
-		for _, args := range u.SetCond {
-			buf.WriteString(fmt.Sprintf(" %s", strings.Join(args, " ")))
+	if len(u.setCond) > 0 {
+		buf.WriteLeadingString("SET ")
+		for _, args := range u.setCond {
+			buf.WriteString(fmt.Sprintf("%s", strings.Join(args, " ")))
 		}
 	}
 
 	if len(u.Conditions) > 0 {
-		buf.WriteLeadingString("WHERE")
+		buf.WriteLeadingString("WHERE ")
 		for _, args := range u.Conditions {
-			buf.WriteString(fmt.Sprintf(" %s", strings.Join(args, " ")))
+			buf.WriteString(fmt.Sprintf("%s", strings.Join(args, " ")))
 		}
 	}
 	buf.WriteString(";")

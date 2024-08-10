@@ -6,53 +6,57 @@ import (
 )
 
 type InsertBuilder struct {
-	Action    string
-	TableName string
-	Columns   []string
-	Values    []interface{}
+	action    string
+	tableName string
+	columns   []string
+	values    []interface{}
 }
 
 // Creates a new instance of the InsertBuilder struct
 func NewInsertBuilder() *InsertBuilder {
 	return &InsertBuilder{
-		Action:  "INSERT",
-		Columns: make([]string, 0),
+		action:  "INSERT",
+		columns: make([]string, 0),
 	}
+}
+
+func Insert(tableName string) *InsertBuilder {
+	return NewInsertBuilder().Table(tableName)
 }
 
 // Sets table name
 func (i *InsertBuilder) Table(tableName string) *InsertBuilder {
-	i.TableName = tableName
+	i.tableName = tableName
 	return i
 }
 
 func (i *InsertBuilder) Cols(columns ...string) *InsertBuilder {
-	i.Columns = columns
+	i.columns = columns
 	return i
 }
 
 func (i *InsertBuilder) Vals(values ...interface{}) *InsertBuilder {
-	i.Values = values
+	i.values = values
 	return i
 }
 
 func (i *InsertBuilder) Build() string {
 	buf := newStringBuilder()
-	buf.WriteLeadingString(fmt.Sprintf("%s INTO %s ", i.Action, i.TableName))
+	buf.WriteLeadingString(fmt.Sprintf("%s INTO %s ", i.action, i.tableName))
 
 	buf.WriteString("(")
-	if len(i.Columns) > 1 {
-		buf.WriteString(strings.Join(i.Columns, ","))
+	if len(i.columns) > 1 {
+		buf.WriteString(strings.Join(i.columns, ","))
 	} else {
-		buf.WriteString(i.Columns[0])
+		buf.WriteString(i.columns[0])
 	}
 	buf.WriteString(")")
 
 	buf.WriteLeadingString("VALUES ")
-	if len(i.Values) > 0 {
+	if len(i.values) > 0 {
 		buf.WriteString("(")
-		for j := 0; j < len(i.Values); j++ {
-			val := i.Values[j]
+		for j := 0; j < len(i.values); j++ {
+			val := i.values[j]
 			switch v := val.(type) {
 			case string:
 				buf.WriteString(fmt.Sprintf("'%s'", v))
@@ -64,7 +68,7 @@ func (i *InsertBuilder) Build() string {
 				buf.WriteString(strings.ToUpper(fmt.Sprintf("%v", v)))
 			}
 
-			if j < len(i.Values)-1 {
+			if j < len(i.values)-1 {
 				buf.WriteString(",")
 			}
 		}
