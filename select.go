@@ -32,49 +32,59 @@ func Select(columns ...string) *SelectBuilder {
 	return NewSelectBuilder().Select(columns...)
 }
 
+// Returns all the table names
 func (s *SelectBuilder) TableNames() []string {
 	return s.tables
 }
 
+// Sets the fields that query will select
 func (s *SelectBuilder) Select(columns ...string) *SelectBuilder {
 	s.fields = columns
 	return s
 }
 
+// Sets the tables that query will target
 func (s *SelectBuilder) From(tables ...string) *SelectBuilder {
 	s.tables = tables
 	return s
 }
 
+// Sets the fields that will be selecting
 func (s *SelectBuilder) Where(conditions ...string) *SelectBuilder {
 	s.conditions = append(s.conditions, conditions)
 	return s
 }
 
+// Sets an order to the query
 func (s *SelectBuilder) OrderBy(columns ...string) *SelectBuilder {
 	s.orderFields = columns
 	return s
 }
 
+// Sets order in ascending
 func (s *SelectBuilder) Asc() *SelectBuilder {
 	s.order = "ASC"
 	return s
 }
 
+// Sets order in descending
 func (s *SelectBuilder) Desc() *SelectBuilder {
 	s.order = "DESC"
 	return s
 }
 
+// Sets the limit for the query
 func (s *SelectBuilder) Limit(number int) *SelectBuilder {
 	s.limit = number
 	return s
 }
 
+// Returns the query in a string format
 func (s *SelectBuilder) String() string {
 	return s.Build()
 }
 
+// Builds out the final query
 func (s *SelectBuilder) Build() string {
 	buf := newStringBuilder()
 	buf.WriteLeadingString("SELECT ")
@@ -119,11 +129,13 @@ func (s *SelectBuilder) Build() string {
 	return buf.String()
 }
 
+// Sets a new driver
 func (s *SelectBuilder) SetDriver(sqlDriver Driver) *SelectBuilder {
 	s.driver = sqlDriver
 	return s
 }
 
+// Returns current driver being used
 func (s SelectBuilder) GetDriver() Driver {
 	return s.driver
 }

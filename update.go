@@ -23,25 +23,30 @@ func newUpdateBuilder() *UpdateBuilder {
 	}
 }
 
+// Sets the name of the table being updated
 func Update(tableName string) *UpdateBuilder {
 	return NewUpdateBuilder().Update(tableName)
 }
 
+// Sets the name of the table being updated
 func (u *UpdateBuilder) Update(tableName string) *UpdateBuilder {
 	u.table = tableName
 	return u
 }
 
+// Loads up the new values that will be added
 func (u *UpdateBuilder) Set(values ...string) *UpdateBuilder {
 	u.setCond = append(u.setCond, values)
 	return u
 }
 
+// Sets the fields that will be updating
 func (u *UpdateBuilder) Where(conditions ...string) *UpdateBuilder {
 	u.Conditions = append(u.Conditions, conditions)
 	return u
 }
 
+// Builds out the final query
 func (u *UpdateBuilder) Build() string {
 	buf := newStringBuilder()
 	buf.WriteLeadingString(fmt.Sprintf("%s %s", u.action, u.table))
@@ -63,11 +68,13 @@ func (u *UpdateBuilder) Build() string {
 	return buf.String()
 }
 
+// Sets a new driver
 func (s *UpdateBuilder) SetDriver(sqlDriver Driver) *UpdateBuilder {
 	s.driver = sqlDriver
 	return s
 }
 
+// Returns current driver being used
 func (s UpdateBuilder) GetDriver() Driver {
 	return s.driver
 }

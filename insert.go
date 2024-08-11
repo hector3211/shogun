@@ -35,20 +35,24 @@ func (i *InsertBuilder) Table(tableName string) *InsertBuilder {
 	return i
 }
 
+// Loads up fields that will be targeted
 func (i *InsertBuilder) Cols(columns ...string) *InsertBuilder {
 	i.columns = columns
 	return i
 }
 
+// Sets the values
 func (i *InsertBuilder) Vals(values ...interface{}) *InsertBuilder {
 	i.values = values
 	return i
 }
 
+// Returns back the query in string format
 func (i InsertBuilder) String() string {
 	return i.Build()
 }
 
+// Builds out the final query
 func (i *InsertBuilder) Build() string {
 	buf := newStringBuilder()
 	buf.WriteLeadingString(fmt.Sprintf("%s INTO %s ", i.action, i.tableName))
@@ -88,11 +92,13 @@ func (i *InsertBuilder) Build() string {
 	return buf.String()
 }
 
+// Sets a new driver
 func (i *InsertBuilder) SetDriver(sqlDriver Driver) *InsertBuilder {
 	i.driver = sqlDriver
 	return i
 }
 
+// Returns current driver being used
 func (i InsertBuilder) GetDriver() Driver {
 	return i.driver
 }

@@ -10,25 +10,31 @@ const (
 var DefaultDriver = SQLITE
 
 func (d Driver) NewCreateBuilder() *CreateTableBuilder {
-	c := newCreateTableBuilder()
-	c.SetDriver(d)
-	return c
+	t := newCreateTableBuilder()
+	t.SetDriver(d)
+	return t
 }
 
 func (d Driver) NewInsertBuilder() *InsertBuilder {
-	i := newInsertBuilder()
-	i.SetDriver(d)
-	return i
+	t := newInsertBuilder()
+	t.SetDriver(d)
+	return t
 }
 
 func (d Driver) NewSelectBuilder() *SelectBuilder {
-	s := newSelectbuilder()
-	s.SetDriver(d)
-	return s
+	t := newSelectbuilder()
+	t.SetDriver(d)
+	return t
 }
 
 func (d Driver) NewUpdateBuilder() *UpdateBuilder {
-	u := newUpdateBuilder()
-	u.SetDriver(d)
-	return u
+	t := newUpdateBuilder()
+	t.SetDriver(d)
+	return t
+}
+
+func (d Driver) NewDeleteBuilder() *DeleteBuilder {
+	t := newDeleteBuilder()
+	t.SetDriver(d)
+	return t
 }
