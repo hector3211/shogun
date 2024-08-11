@@ -25,20 +25,29 @@ func newDeleteBuilder() *DeleteBuilder {
 	}
 }
 
+// Sets up table that will be targeted
 func Delete(tableName string) *DeleteBuilder {
 	return newDeleteBuilder().Delete(tableName)
 }
 
+// Sets up table that will be targeted
 func (d *DeleteBuilder) Delete(tableName string) *DeleteBuilder {
 	d.tableName = tableName
 	return d
 }
 
+// Sets the fields that the query will filter from
 func (d *DeleteBuilder) Where(conditions ...string) *DeleteBuilder {
 	d.conditions = append(d.conditions, conditions)
 	return d
 }
 
+// Returns back the query in string format
+func (d *DeleteBuilder) String() string {
+	return d.Build()
+}
+
+// Builds out the final query
 func (d *DeleteBuilder) Build() string {
 	buf := newStringBuilder()
 	buf.WriteLeadingString("DELETE ")

@@ -36,7 +36,7 @@ func TestDriverPostgres(t *testing.T) {
 func TestDriverInsert(t *testing.T) {
 	query := "INSERT INTO users (name) VALUES ('maddog');"
 
-	insertQuery := POSTGRES.NewInsertBuilder().Table("users").Cols("name").Vals("maddog").Build()
+	insertQuery := POSTGRES.NewInsertBuilder().Insert("users").Cols("name").Vals("maddog").Build()
 
 	if insertQuery != query {
 		t.Fatalf("TestDriverInsert failed, wanted %s got %s", query, insertQuery)

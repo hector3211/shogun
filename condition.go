@@ -51,7 +51,7 @@ func stringifyStatement(field, action string, value interface{}) string {
 		statement = fmt.Sprintf("%s %s '%s'", field, action, value)
 	case bool:
 		strBool := fmt.Sprintf("%v", value)
-		statement = fmt.Sprintf("%s %s '%s'", field, action, strings.ToUpper(strBool))
+		statement = fmt.Sprintf("%s %s %s", field, action, strings.ToUpper(strBool))
 	default:
 		statement = fmt.Sprintf("%s %s %v", field, action, value)
 	}

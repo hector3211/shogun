@@ -18,6 +18,7 @@ func NewInsertBuilder() *InsertBuilder {
 	return DefaultDriver.NewInsertBuilder()
 }
 
+// Creates a new instance of the InsertBuilder struct
 func newInsertBuilder() *InsertBuilder {
 	return &InsertBuilder{
 		action:  "INSERT",
@@ -26,11 +27,11 @@ func newInsertBuilder() *InsertBuilder {
 }
 
 func Insert(tableName string) *InsertBuilder {
-	return NewInsertBuilder().Table(tableName)
+	return NewInsertBuilder().Insert(tableName)
 }
 
 // Sets table name
-func (i *InsertBuilder) Table(tableName string) *InsertBuilder {
+func (i *InsertBuilder) Insert(tableName string) *InsertBuilder {
 	i.tableName = tableName
 	return i
 }
