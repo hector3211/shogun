@@ -6,11 +6,15 @@ import (
 )
 
 type InsertBuilder struct {
-	driver    Driver
-	action    string
-	tableName string
-	columns   []string
-	values    []interface{}
+	driver        Driver
+	action        string
+	tableName     string
+	columns       []string
+	values        []interface{}
+	upsert        bool
+	conflictField string
+	updateField   string
+	updatedValue  interface{}
 }
 
 // Creates a new instance of the InsertBuilder struct
@@ -23,6 +27,7 @@ func newInsertBuilder() *InsertBuilder {
 	return &InsertBuilder{
 		action:  "INSERT",
 		columns: make([]string, 0),
+		upsert:  false,
 	}
 }
 
@@ -45,6 +50,14 @@ func (i *InsertBuilder) Cols(columns ...string) *InsertBuilder {
 // Sets the values
 func (i *InsertBuilder) Vals(values ...interface{}) *InsertBuilder {
 	i.values = values
+	return i
+}
+
+func (i *InsertBuilder) OnConflictDoUpdate(targetField, updateField string, updatedValue interface{}) *InsertBuilder {
+	i.conflictField = targetField
+	i.updateField = updateField
+	i.updatedValue = updatedValue
+	i.upsert = true
 	return i
 }
 
@@ -87,6 +100,22 @@ func (i *InsertBuilder) Build() string {
 			}
 		}
 		buf.WriteString(")")
+	}
+
+	if i.upsert {
+		buf.WriteLeadingString(fmt.Sprintf("ON CONFLICT(%s) ", i.conflictField))
+		buf.WriteLeadingString(fmt.Sprintf("DO UPDATE SET %s = ", i.updateField))
+		switch v := i.updatedValue.(type) {
+		case string:
+			buf.WriteString(fmt.Sprintf("'%s'", v))
+		case int:
+			buf.WriteString(fmt.Sprintf("%d", v))
+		case float32:
+			buf.WriteString(fmt.Sprintf("%f", v))
+		case bool:
+			buf.WriteString(strings.ToUpper(fmt.Sprintf("%v", v)))
+		}
+
 	}
 	buf.WriteString(";")
 

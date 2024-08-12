@@ -32,12 +32,22 @@ func TestInsertDouble(t *testing.T) {
 	}
 }
 
-func TestInsertBool(t *testing.T) {
-	query := "INSERT INTO users (name,age,email_verified) VALUES ('maddog',20,TRUE);"
+func TestInsertUpsert(t *testing.T) {
+	query := "INSERT INTO users (id,name) VALUES (1,'Alice') ON CONFLICT(id) DO UPDATE SET name = 'NewAlice';"
 
-	insertQuery := NewInsertBuilder().Insert("users").Cols("name", "age", "email_verified").Vals("maddog", 20, true).Build()
+	insertQuery := Insert("users").Cols("id", "name").Vals(1, "Alice").OnConflictDoUpdate("id", "name", "NewAlice").Build()
 
 	if insertQuery != query {
-		t.Fatalf("TestinsertDouble failed, wanted %s got %s", query, insertQuery)
+		t.Fatalf("TestInsertUpsert failed, wanted %s got %s", query, insertQuery)
+	}
+}
+
+func TestInsertUpsertTwo(t *testing.T) {
+	query := "INSERT INTO users (name,email) VALUES ('doe','email@email.com') ON CONFLICT(email) DO UPDATE SET email = 'Newemail@email.com';"
+
+	insertQuery := Insert("users").Cols("name", "email").Vals("doe", "email@email.com").OnConflictDoUpdate("email", "email", "Newemail@email.com").Build()
+
+	if insertQuery != query {
+		t.Fatalf("TestInsertUpsert failed, wanted %s got %s", query, insertQuery)
 	}
 }

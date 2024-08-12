@@ -39,12 +39,6 @@ func (d Driver) NewUpdateBuilder() *UpdateBuilder {
 	return t
 }
 
-func (d Driver) NewUpsertBuilder() *UpsertBuilder {
-	t := newUpsertBuilder()
-	t.SetDriver(d)
-	return t
-}
-
 func (d Driver) NewDeleteBuilder() *DeleteBuilder {
 	t := newDeleteBuilder()
 	t.SetDriver(d)
