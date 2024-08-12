@@ -15,6 +15,12 @@ func (d Driver) NewCreateBuilder() *CreateTableBuilder {
 	return t
 }
 
+func (d Driver) NewIndexBuilder() *CreateIndexBuilder {
+	t := newIndexBuilder()
+	t.SetDriver(d)
+	return t
+}
+
 func (d Driver) NewInsertBuilder() *InsertBuilder {
 	t := newInsertBuilder()
 	t.SetDriver(d)
@@ -29,6 +35,12 @@ func (d Driver) NewSelectBuilder() *SelectBuilder {
 
 func (d Driver) NewUpdateBuilder() *UpdateBuilder {
 	t := newUpdateBuilder()
+	t.SetDriver(d)
+	return t
+}
+
+func (d Driver) NewUpsertBuilder() *UpsertBuilder {
+	t := newUpsertBuilder()
 	t.SetDriver(d)
 	return t
 }

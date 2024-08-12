@@ -56,3 +56,18 @@ func TestDriverUpdate(t *testing.T) {
 		t.Fatalf("TestDriverUpdate failed wanted %s got %s", query, stmt)
 	}
 }
+
+func TestDriverDelete(t *testing.T) {
+	query := "DELETE users WHERE id = 1 OR name = 'hector' AND verifyEmail = FALSE;"
+
+	stmt := POSTGRES.NewDeleteBuilder().Delete("users").Where(
+		Equal("id", 1),
+		Or(),
+		Equal("name", "hector"),
+		And(),
+		Equal("verifyEmail", false)).Build()
+
+	if stmt != query {
+		t.Fatalf("TestDriverUpdate failed wanted %s got %s", query, stmt)
+	}
+}
