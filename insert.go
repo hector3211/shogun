@@ -6,15 +6,15 @@ import (
 )
 
 type InsertBuilder struct {
-	driver        Driver
-	action        string
-	tableName     string
-	columns       []string
-	values        []interface{}
-	upsert        bool
-	conflictField string
-	updateField   string
-	updatedValue  interface{}
+	driver      Driver
+	action      string
+	tableName   string
+	columns     []string
+	values      []interface{}
+	upsert      bool
+	targetField string
+	updateField string
+	newValue    interface{}
 }
 
 // Creates a new instance of the InsertBuilder struct
@@ -31,6 +31,7 @@ func newInsertBuilder() *InsertBuilder {
 	}
 }
 
+// Returns an InsertBulder intance while calling it's insert func
 func Insert(tableName string) *InsertBuilder {
 	return NewInsertBuilder().Insert(tableName)
 }
@@ -53,11 +54,17 @@ func (i *InsertBuilder) Vals(values ...interface{}) *InsertBuilder {
 	return i
 }
 
-func (i *InsertBuilder) OnConflictDoUpdate(targetField, updateField string, updatedValue interface{}) *InsertBuilder {
-	i.conflictField = targetField
-	i.updateField = updateField
-	i.updatedValue = updatedValue
+// Toggles insert statement to an upsert statement
+func (i *InsertBuilder) OnConflict(target string) *InsertBuilder {
 	i.upsert = true
+	i.targetField = target
+	return i
+}
+
+// Updates to the field targeted
+func (i *InsertBuilder) DoUpdate(updateField string, value interface{}) *InsertBuilder {
+	i.updateField = updateField
+	i.newValue = value
 	return i
 }
 
@@ -67,7 +74,7 @@ func (i InsertBuilder) String() string {
 }
 
 // Builds out the final query
-func (i *InsertBuilder) Build() string {
+func (i InsertBuilder) Build() string {
 	buf := newStringBuilder()
 	buf.WriteLeadingString(fmt.Sprintf("%s INTO %s ", i.action, i.tableName))
 
@@ -103,9 +110,8 @@ func (i *InsertBuilder) Build() string {
 	}
 
 	if i.upsert {
-		buf.WriteLeadingString(fmt.Sprintf("ON CONFLICT(%s) ", i.conflictField))
-		buf.WriteLeadingString(fmt.Sprintf("DO UPDATE SET %s = ", i.updateField))
-		switch v := i.updatedValue.(type) {
+		buf.WriteLeadingString(fmt.Sprintf("ON CONFLICT(%s) DO UPDATE SET %s = ", i.targetField, i.updateField))
+		switch v := i.newValue.(type) {
 		case string:
 			buf.WriteString(fmt.Sprintf("'%s'", v))
 		case int:
