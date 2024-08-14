@@ -44,3 +44,9 @@ func (d Driver) NewDeleteBuilder() *DeleteBuilder {
 	t.SetDriver(d)
 	return t
 }
+
+func (d Driver) NewJoinBuilder() *JoinBuilder {
+	t := newJoinBuilder()
+	t.SetDriver(d)
+	return t
+}

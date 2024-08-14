@@ -7,10 +7,33 @@ import (
 
 type Conditions [][]string
 
-// func (w *WhereCond) Where(conditions ...string) *WhereCond {
-// 	w.Cond = append(w.Cond, conditions)
-// 	return w
-// }
+//	func (w *WhereCond) Where(conditions ...string) *WhereCond {
+//		w.Cond = append(w.Cond, conditions)
+//		return w
+//	}
+type ConditionToken int
+
+const (
+	EQUAL ConditionToken = iota
+	NOTEQUAL
+	LESSTHAN
+	GREATERTHAN
+)
+
+func (c ConditionToken) String() string {
+	switch c {
+	case EQUAL:
+		return "EQUAL"
+	case NOTEQUAL:
+		return "NOTEQUAL"
+	case LESSTHAN:
+		return "LESSTHAN"
+	case GREATERTHAN:
+		return "GREATERTHAN"
+	default:
+		return ""
+	}
+}
 
 func Equal(field string, value interface{}) string {
 	return stringifyStatement(field, "=", value)

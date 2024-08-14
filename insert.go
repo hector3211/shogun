@@ -43,13 +43,13 @@ func (i *InsertBuilder) Insert(tableName string) *InsertBuilder {
 }
 
 // Loads up fields that will be targeted
-func (i *InsertBuilder) Cols(columns ...string) *InsertBuilder {
+func (i *InsertBuilder) Columns(columns ...string) *InsertBuilder {
 	i.columns = columns
 	return i
 }
 
 // Sets the values
-func (i *InsertBuilder) Vals(values ...interface{}) *InsertBuilder {
+func (i *InsertBuilder) Values(values ...interface{}) *InsertBuilder {
 	i.values = values
 	return i
 }
