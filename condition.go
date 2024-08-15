@@ -23,13 +23,13 @@ const (
 func (c ConditionToken) String() string {
 	switch c {
 	case EQUAL:
-		return "EQUAL"
+		return "="
 	case NOTEQUAL:
-		return "NOTEQUAL"
+		return "!="
 	case LESSTHAN:
-		return "LESSTHAN"
+		return "<"
 	case GREATERTHAN:
-		return "GREATERTHAN"
+		return ">"
 	default:
 		return ""
 	}

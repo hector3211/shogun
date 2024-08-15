@@ -1,41 +1,75 @@
 package shogun
 
-import "testing"
+import (
+	"testing"
+)
 
-// func TestJoinRight(t *testing.T) {
-// 	query := "SELECT orders.order_id,customers.customers_name,orders.order_date FROM orders RIGHT JOIN customers ON orderes.customer_id = customers.id;"
-//
-// 	stmt := NewJoinBuilder().JSelect("orders", "order_id").JSelect("customers", "customer_name").JSelect("orders", "order_date").JFrom("orderes").Join(RIGHT, "customers").OnTable("orders", "customer_id").OnTable("customers", "customer_id").Build()
-//
-// 	if stmt != query {
-// 		t.Fatalf("TestJoinRight failed! wanted %s got %s", query, stmt)
-// 	}
-// }
-//
-// func TestJoinLeft(t *testing.T) {
-// 	query := "SELECT employees.id,employees.name,departments.name FROM employees LEFT JOIN departments ON employees.department_id = departments.id;"
-//
-// 	stmt := NewJoinBuilder().JSelect("employees", "id").JSelect("employees", "name").JSelect("departments", "name").JFrom("employees").Join(LEFT, "departments").OnTable("employees", "department_id").OnTable("departments", "id").Build()
-//
-// 	if stmt != query {
-// 		t.Fatalf("TestJoinLeft failed! wanted %s got %s", query, stmt)
-// 	}
-// }
-//
-// func TestJoinInner(t *testing.T) {
-// 	query := "SELECT employees.id,employees.name,departments.name FROM employees INNER JOIN departments ON employees.department_id = departments.id;"
-//
-// 	stmt := JSelect("employees", "id").JSelect("employees", "name").JSelect("departments", "name").JFrom("employees").Join(INNER, "departments").OnTable("employees", "department_id").OnTable("departments", "id").Build()
-//
-// 	if stmt != query {
-// 		t.Fatalf("TestJoinInner failed! wanted %s got %s", query, stmt)
-// 	}
-// }
+func TestJoinRight(t *testing.T) {
+	query := "SELECT orders.orders_id,orders.orders_date,customers.customers_name FROM orders RIGHT JOIN customers ON orders.customer_id = customers.customers_id AND orders.customer_id != customers.customers_id;"
 
-func TestJoinDriver(t *testing.T) {
+	stmt := NewJoinBuilder().
+		JSelect("orders", "orders_id").
+		JSelect("customers", "customers_name").
+		JSelect("orders", "orders_date").
+		JFrom("orders").
+		Join(RIGHT, "customers").
+		OnCondition("orders", "customer_id", "customers", "customers_id", "", EQUAL).
+		And().
+		OnCondition("orders", "customer_id", "customers", "customers_id", "", NOTEQUAL).
+		Build()
+
+	if stmt != query {
+		t.Fatalf("TestJoinRight failed! wanted %s got %s", query, stmt)
+	}
+}
+
+func TestJoinLeft(t *testing.T) {
+	query := "SELECT employees.id,employees.name,departments.name FROM employees LEFT JOIN departments ON employees.department_id = departments.id;"
+
+	stmt := NewJoinBuilder().
+		JSelect("employees", "id").
+		JSelect("employees", "name").
+		JSelect("departments", "name").
+		JFrom("employees").
+		Join(LEFT, "departments").
+		OnCondition("employees", "department_id", "departments", "id", "", EQUAL).
+		Build()
+
+	if stmt != query {
+		t.Fatalf("TestJoinLeft failed! wanted %s got %s", query, stmt)
+	}
+}
+
+func TestJoinInner(t *testing.T) {
 	query := "SELECT employees.id,employees.name,departments.name FROM employees INNER JOIN departments ON employees.department_id = departments.id;"
 
-	stmt := SQLITE.NewJoinBuilder().JSelect("employees", "id").JSelect("employees", "name").JSelect("departments", "name").JFrom("employees").Join(INNER, "departments").OnTable("employees", "department_id").OnTable("departments", "id").Build()
+	stmt := JSelect("employees", "id").
+		JSelect("employees", "name").
+		JSelect("departments", "name").
+		JFrom("employees").
+		Join(INNER, "departments").
+		OnCondition("employees", "department_id", "departments", "id", "", EQUAL).
+		Build()
+
+	if stmt != query {
+		t.Fatalf("TestJoinInner failed! wanted %s got %s", query, stmt)
+	}
+}
+
+func TestJoinDriver(t *testing.T) {
+	query := "SELECT employees.id,employees.name,departments.name FROM employees INNER JOIN departments ON employees.department_id = departments.id AND employees.name = 'hector';"
+
+	stmt := SQLITE.NewJoinBuilder().
+		JSelect("employees", "id").
+		JSelect("employees", "name").
+		JSelect("departments", "name").
+		JFrom("employees").
+		Join(INNER, "departments").
+		OnCondition("employees", "department_id", "departments", "id", "", EQUAL).
+		And().
+		OnCondition("employees", "name", "", "", "hector", EQUAL).
+		Build()
+		// Build()
 
 	if stmt != query {
 		t.Fatalf("TestJoinDriver failed! wanted %s got %s", query, stmt)
