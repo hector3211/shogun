@@ -20,7 +20,9 @@ func TestDeleteTwo(t *testing.T) {
 		And(),
 		Equal("name", "hector"),
 		And(),
-		Equal("verifyEmail", true)).Build()
+		Equal("verifyEmail", true),
+	).
+		Build()
 
 	if stmt != query {
 		t.Fatalf("TestDeleteTwo failed! wanted %s got %s", query, stmt)

@@ -184,9 +184,9 @@ func (j *JoinBuilder) Build() string {
 	}
 
 	// FROM
-	if j.fromTable != "" {
+	if len(j.fromTable) != 0 {
 		buf.WriteLeadingString("FROM ")
-		buf.WriteString(j.fromTable)
+		buf.WriteString(string(j.fromTable))
 	}
 
 	// Join

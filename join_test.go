@@ -69,7 +69,6 @@ func TestJoinDriver(t *testing.T) {
 		And().
 		OnCondition("employees", "name", EQUAL, "", "", "hector").
 		Build()
-		// Build()
 
 	if stmt != query {
 		t.Fatalf("TestJoinDriver failed! wanted %s got %s", query, stmt)
