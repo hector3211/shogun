@@ -91,7 +91,7 @@ func (j *JoinBuilder) Join(typeOfJoin Join, tableName string) *JoinBuilder {
 	return j
 }
 
-func (j *JoinBuilder) OnCondition(tableNameA, tableFieldA, tableNameB, tableFieldB string, arg interface{}, condition ConditionToken) *JoinBuilder {
+func (j *JoinBuilder) OnCondition(tableNameA, tableFieldA string, condition ConditionToken, tableNameB, tableFieldB string, arg interface{}) *JoinBuilder {
 	// if tableExists(j.onSelected, tableNameA) == true {
 	// 	j.onSelected = addTableField(j.onSelected, tableNameA, tableFieldA)
 	// } else {
