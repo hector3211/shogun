@@ -13,9 +13,9 @@ func TestJoinRight(t *testing.T) {
 		JSelect("orders", "orders_date").
 		JFrom("orders").
 		Join(RIGHT, "customers").
-		OnCondition("orders", "customer_id", EQUAL, "customers", "customers_id", "").
+		OnCondition("orders", "customer_id", EQUAL, "customers", "customers_id", nil).
 		And().
-		OnCondition("orders", "customer_id", NOTEQUAL, "customers", "customers_id", "").
+		OnCondition("orders", "customer_id", NOTEQUAL, "customers", "customers_id", nil).
 		Build()
 
 	if stmt != query {
@@ -32,7 +32,7 @@ func TestJoinLeft(t *testing.T) {
 		JSelect("departments", "name").
 		JFrom("employees").
 		Join(LEFT, "departments").
-		OnCondition("employees", "department_id", EQUAL, "departments", "id", "").
+		OnCondition("employees", "department_id", EQUAL, "departments", "id", nil).
 		Build()
 
 	if stmt != query {
@@ -48,7 +48,7 @@ func TestJoinInner(t *testing.T) {
 		JSelect("departments", "name").
 		JFrom("employees").
 		Join(INNER, "departments").
-		OnCondition("employees", "department_id", EQUAL, "departments", "id", "").
+		OnCondition("employees", "department_id", EQUAL, "departments", "id", nil).
 		Build()
 
 		// stmtTwo :=  JSelect("users","name").
@@ -71,7 +71,7 @@ func TestJoinDriver(t *testing.T) {
 		JSelect("departments", "name").
 		JFrom("employees").
 		Join(INNER, "departments").
-		OnCondition("employees", "department_id", EQUAL, "departments", "id", "").
+		OnCondition("employees", "department_id", EQUAL, "departments", "id", nil).
 		And().
 		OnCondition("employees", "name", EQUAL, "", "", "hector").
 		Build()

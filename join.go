@@ -46,6 +46,7 @@ type JoinQuery interface {
 	Equal() *JoinBuilder
 	NotEqual() *JoinBuilder
 	And() *JoinBuilder
+	Or() *JoinBuilder
 	String() string
 	Build() string
 	SetDriver(sqlDriver Driver) *JoinBuilder
@@ -65,12 +66,7 @@ type JoinBuilder struct {
 
 // Creates a new instance of the JoinBuilder struct
 func NewJoinBuilder() *JoinBuilder {
-	return &JoinBuilder{
-		driver:         DefaultDriver,
-		typeOfJoin:     NOJOIN,
-		selectedTables: make([]Table, 0),
-		conditionStmts: make([]string, 0),
-	}
+	return DefaultDriver.NewJoinBuilder()
 }
 
 // Creates a new instance of the JoinBuilder struct
@@ -90,6 +86,9 @@ func JSelect(tableName, targetField string) *JoinBuilder {
 
 // Sets the tables and fields that query will select
 func (j *JoinBuilder) JSelect(tableName, targetField string) *JoinBuilder {
+	if tableName == "" && targetField == "" {
+		return j
+	}
 	if tableExists(j.selectedTables, tableName) {
 		j.selectedTables = addTableField(j.selectedTables, tableName, targetField)
 	} else {
@@ -100,12 +99,19 @@ func (j *JoinBuilder) JSelect(tableName, targetField string) *JoinBuilder {
 
 // Sets the table that query will target
 func (j *JoinBuilder) JFrom(tableName string) *JoinBuilder {
+	if tableName == "" {
+		return j
+	}
 	j.fromTable = tableName
 	return j
 }
 
 // Sets the join table
 func (j *JoinBuilder) Join(typeOfJoin Join, tableName string) *JoinBuilder {
+	if tableName == "" {
+		return j
+	}
+
 	j.typeOfJoin = typeOfJoin
 	j.joinTable = tableName
 	return j
@@ -115,15 +121,13 @@ func (j *JoinBuilder) Join(typeOfJoin Join, tableName string) *JoinBuilder {
 func (j *JoinBuilder) OnCondition(tableNameA, tableFieldA string, condition ConditionToken, tableNameB, tableFieldB string, arg interface{}) *JoinBuilder {
 	// If no table B provided then we compare with arg
 	if tableNameB == "" && tableFieldB == "" {
-		if arg != "" {
+		if arg != nil {
 			var argFormat string
 			switch v := arg.(type) {
 			case string:
 				argFormat = fmt.Sprintf("'%s'", v)
-			case int:
+			case int, float32, float64:
 				argFormat = fmt.Sprintf("%d", v)
-			case float32:
-				argFormat = fmt.Sprintf("%f", v)
 			case bool:
 				argFormat = strings.ToUpper(fmt.Sprintf("%v", v))
 			}
@@ -151,6 +155,11 @@ func (j *JoinBuilder) NotEqual() *JoinBuilder {
 // Toggles the ability to have multiple conditions
 func (j *JoinBuilder) And() *JoinBuilder {
 	j.and = true
+	return j
+}
+
+func (j *JoinBuilder) Or() *JoinBuilder {
+	j.and = false
 	return j
 }
 
