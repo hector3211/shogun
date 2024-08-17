@@ -5,6 +5,16 @@ import (
 	"strings"
 )
 
+type UpdateQuery interface {
+	Update(tableName string) *UpdateBuilder
+	Set(values ...string) *UpdateBuilder
+	Where(conditions ...string) *UpdateBuilder
+	String() string
+	Build() string
+	SetDriver(sqlDriver Driver) *UpdateBuilder
+	GetDriver() string
+}
+
 type UpdateBuilder struct {
 	driver  Driver
 	action  string

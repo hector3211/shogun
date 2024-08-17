@@ -5,6 +5,20 @@ import (
 	"strings"
 )
 
+type SelectQuery interface {
+	Select(columns ...string) *SelectBuilder
+	From(tables ...string) *SelectBuilder
+	Where(conditions ...string) *SelectBuilder
+	OrderBy(columns ...string) *SelectBuilder
+	Asc() *SelectBuilder
+	Desc() *SelectBuilder
+	Limit(number int) *SelectBuilder
+	String() string
+	Build() string
+	SetDriver(sqlDriver Driver) *SelectBuilder
+	GetDriver() string
+}
+
 type SelectBuilder struct {
 	driver      Driver
 	tables      []string

@@ -6,15 +6,15 @@ import (
 )
 
 type InsertQuery interface {
-	Insert()
-	Columns()
-	Values()
-	OnConflict()
-	DoUpdate()
-	String()
-	Build()
-	SetDriver()
-	GetDriver()
+	Insert(tableName string) *InsertBuilder
+	Columns(columns ...string) *InsertBuilder
+	Values(values ...interface{}) *InsertBuilder
+	OnConflict(target string) *InsertBuilder
+	DoUpdate(updateField string) *InsertBuilder
+	String() string
+	Build() string
+	SetDriver() *InsertBuilder
+	GetDriver() string
 }
 
 type InsertBuilder struct {

@@ -45,9 +45,9 @@ func TestInsertUpsert(t *testing.T) {
 func TestInsertUpsertTwo(t *testing.T) {
 	query := "INSERT INTO users (name,email) VALUES ('doe','email@email.com') ON CONFLICT(email) DO UPDATE SET email = 'Newemail@email.com';"
 
-	insertQuery := Insert("users").Columns("name", "email").Values("doe", "email@email.com").OnConflict("email").DoUpdate("email", "Newemail@email.com").Build()
+	insertQuery := Insert("users").Columns("name", "email").Values("doe", "email@email.com").OnConflict("email").DoUpdate("email", "Newemail@email.com")
 
-	if insertQuery != query {
+	if insertQuery.Build() != query {
 		t.Fatalf("TestInsertUpsert failed, wanted %s got %s", query, insertQuery)
 	}
 }

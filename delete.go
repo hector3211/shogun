@@ -6,12 +6,12 @@ import (
 )
 
 type DeleteQuery interface {
-	Delete()
-	Where()
-	String()
-	Build()
-	SetDriver()
-	GetDriver()
+	Delete(tableName string) *DeleteBuilder
+	Where(conditions ...string) *DeleteBuilder
+	String() string
+	Build() string
+	SetDriver(sqlDriver Driver) *DeleteBuilder
+	GetDriver() string
 }
 
 type DeleteBuilder struct {

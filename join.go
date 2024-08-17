@@ -38,6 +38,19 @@ type Table struct {
 	fields []string
 }
 
+type JoinQuery interface {
+	JSelect(tableName, targetField string) *JoinBuilder
+	JFrom(tableName string) *JoinBuilder
+	Join(typeOfJoin Join, tableName string) *JoinBuilder
+	OnCondition(tableNameA, tableFieldA string, condition ConditionToken, tableNameB, tableFieldB string, arg interface{}) *JoinBuilder
+	Equal() *JoinBuilder
+	NotEqual() *JoinBuilder
+	And() *JoinBuilder
+	String() string
+	Build() string
+	SetDriver(sqlDriver Driver) *JoinBuilder
+	GetDriver() string
+}
 type JoinBuilder struct {
 	driver         Driver
 	typeOfJoin     Join
