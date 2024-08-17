@@ -80,6 +80,17 @@ func (i *InsertBuilder) DoUpdate(updateField string, value interface{}) *InsertB
 	return i
 }
 
+// Sets a new driver
+func (i *InsertBuilder) SetDriver(sqlDriver Driver) *InsertBuilder {
+	i.driver = sqlDriver
+	return i
+}
+
+// Returns current driver being used
+func (i InsertBuilder) GetDriver() Driver {
+	return i.driver
+}
+
 // Returns back the query in string format
 func (i InsertBuilder) String() string {
 	return i.Build()
@@ -138,15 +149,4 @@ func (i InsertBuilder) Build() string {
 	buf.WriteString(";")
 
 	return buf.String()
-}
-
-// Sets a new driver
-func (i *InsertBuilder) SetDriver(sqlDriver Driver) *InsertBuilder {
-	i.driver = sqlDriver
-	return i
-}
-
-// Returns current driver being used
-func (i InsertBuilder) GetDriver() Driver {
-	return i.driver
 }

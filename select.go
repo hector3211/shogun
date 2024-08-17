@@ -29,10 +29,12 @@ type SelectBuilder struct {
 	order       string
 }
 
+// Creates a new instance of the SelectBuilder struct
 func NewSelectBuilder() *SelectBuilder {
 	return DefaultDriver.NewSelectBuilder()
 }
 
+// Creates a new instance of the SelectBuilder struct
 func newSelectbuilder() *SelectBuilder {
 	return &SelectBuilder{
 		driver: DefaultDriver,
@@ -42,19 +44,20 @@ func newSelectbuilder() *SelectBuilder {
 	}
 }
 
+// Sets the fields that query will select returning new instance of SelectBuilder
 func Select(columns ...string) *SelectBuilder {
 	return NewSelectBuilder().Select(columns...)
-}
-
-// Returns all the table names
-func (s *SelectBuilder) TableNames() []string {
-	return s.tables
 }
 
 // Sets the fields that query will select
 func (s *SelectBuilder) Select(columns ...string) *SelectBuilder {
 	s.fields = columns
 	return s
+}
+
+// Returns all the table names
+func (s *SelectBuilder) TableNames() []string {
+	return s.tables
 }
 
 // Sets the tables that query will target
@@ -91,6 +94,17 @@ func (s *SelectBuilder) Desc() *SelectBuilder {
 func (s *SelectBuilder) Limit(number int) *SelectBuilder {
 	s.limit = number
 	return s
+}
+
+// Sets a new driver
+func (s *SelectBuilder) SetDriver(sqlDriver Driver) *SelectBuilder {
+	s.driver = sqlDriver
+	return s
+}
+
+// Returns current driver being used
+func (s SelectBuilder) GetDriver() Driver {
+	return s.driver
 }
 
 // Returns the query in a string format
@@ -141,15 +155,4 @@ func (s *SelectBuilder) Build() string {
 	buf.WriteString(";")
 
 	return buf.String()
-}
-
-// Sets a new driver
-func (s *SelectBuilder) SetDriver(sqlDriver Driver) *SelectBuilder {
-	s.driver = sqlDriver
-	return s
-}
-
-// Returns current driver being used
-func (s SelectBuilder) GetDriver() Driver {
-	return s.driver
 }

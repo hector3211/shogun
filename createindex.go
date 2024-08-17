@@ -19,10 +19,12 @@ type CreateIndexBuilder struct {
 	field     string
 }
 
+// creates new instance of CreateIndexBuilder
 func NewIndexBuilder() *CreateIndexBuilder {
 	return DefaultDriver.NewIndexBuilder()
 }
 
+// creates new instance of CreateIndexBuilder
 func newIndexBuilder() *CreateIndexBuilder {
 	return &CreateIndexBuilder{
 		driver: DefaultDriver,
@@ -30,34 +32,22 @@ func newIndexBuilder() *CreateIndexBuilder {
 	}
 }
 
+// Sets index name returning a new instance of CreateIndexBuilder
 func Index(indexName string) *CreateIndexBuilder {
 	return newIndexBuilder().Index(indexName)
 }
 
+// Sets index name
 func (i *CreateIndexBuilder) Index(indexName string) *CreateIndexBuilder {
 	i.name = indexName
 	return i
 }
 
+// Sets the table and field associated with the pending index
 func (i *CreateIndexBuilder) On(tableName, field string) *CreateIndexBuilder {
 	i.tableName = tableName
 	i.field = field
 	return i
-}
-
-func (i CreateIndexBuilder) String() string {
-	return i.Build()
-}
-
-func (i *CreateIndexBuilder) Build() string {
-	buf := newStringBuilder()
-	buf.WriteLeadingString(i.action + " ")
-	buf.WriteLeadingString(i.name + " ")
-	buf.WriteLeadingString("ON ")
-	buf.WriteString(fmt.Sprintf("%s(%s)", i.tableName, i.field))
-	buf.WriteString(";")
-
-	return buf.String()
 }
 
 // Sets a new driver
@@ -69,4 +59,17 @@ func (i *CreateIndexBuilder) SetDriver(sqlDriver Driver) *CreateIndexBuilder {
 // Returns current driver being used
 func (i CreateIndexBuilder) GetDriver() Driver {
 	return i.driver
+}
+
+// Returns query in a string format
+func (i CreateIndexBuilder) String() string {
+	return i.Build()
+}
+
+// Builds out the final query
+func (i *CreateIndexBuilder) Build() string {
+	buf := newStringBuilder()
+	buf.WriteString(fmt.Sprintf("%s %s ON %s(%s);", i.action, i.name, i.tableName, i.field))
+
+	return buf.String()
 }

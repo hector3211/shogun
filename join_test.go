@@ -51,6 +51,12 @@ func TestJoinInner(t *testing.T) {
 		OnCondition("employees", "department_id", EQUAL, "departments", "id", "").
 		Build()
 
+		// stmtTwo :=  JSelect("users","name").
+		//     JSelect("products","sales_person").
+		//     JFrom("users").
+		//     Join(CROSS, "products").
+		//     OnCondition("users","name", EQUAL, "products", "sales_person","")
+
 	if stmt != query {
 		t.Fatalf("TestJoinInner failed! wanted %s got %s", query, stmt)
 	}

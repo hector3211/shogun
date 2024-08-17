@@ -51,6 +51,17 @@ func (d *DeleteBuilder) Where(conditions ...string) *DeleteBuilder {
 	return d
 }
 
+// Sets a new driver
+func (d *DeleteBuilder) SetDriver(sqlDriver Driver) *DeleteBuilder {
+	d.driver = sqlDriver
+	return d
+}
+
+// Returns current driver being used
+func (d DeleteBuilder) GetDriver() Driver {
+	return d.driver
+}
+
 // Returns back the query in string format
 func (d *DeleteBuilder) String() string {
 	return d.Build()
@@ -75,15 +86,4 @@ func (d *DeleteBuilder) Build() string {
 	buf.WriteString(";")
 
 	return buf.String()
-}
-
-// Sets a new driver
-func (d *DeleteBuilder) SetDriver(sqlDriver Driver) *DeleteBuilder {
-	d.driver = sqlDriver
-	return d
-}
-
-// Returns current driver being used
-func (d DeleteBuilder) GetDriver() Driver {
-	return d.driver
 }

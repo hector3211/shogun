@@ -56,6 +56,22 @@ func (u *UpdateBuilder) Where(conditions ...string) *UpdateBuilder {
 	return u
 }
 
+// Sets a new driver
+func (s *UpdateBuilder) SetDriver(sqlDriver Driver) *UpdateBuilder {
+	s.driver = sqlDriver
+	return s
+}
+
+// Returns current driver being used
+func (s UpdateBuilder) GetDriver() Driver {
+	return s.driver
+}
+
+// Returns the query in a string format
+func (s UpdateBuilder) String() string {
+	return s.Build()
+}
+
 // Builds out the final query
 func (u *UpdateBuilder) Build() string {
 	buf := newStringBuilder()
@@ -76,15 +92,4 @@ func (u *UpdateBuilder) Build() string {
 	}
 	buf.WriteString(";")
 	return buf.String()
-}
-
-// Sets a new driver
-func (s *UpdateBuilder) SetDriver(sqlDriver Driver) *UpdateBuilder {
-	s.driver = sqlDriver
-	return s
-}
-
-// Returns current driver being used
-func (s UpdateBuilder) GetDriver() Driver {
-	return s.driver
 }

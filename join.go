@@ -51,6 +51,7 @@ type JoinQuery interface {
 	SetDriver(sqlDriver Driver) *JoinBuilder
 	GetDriver() string
 }
+
 type JoinBuilder struct {
 	driver         Driver
 	typeOfJoin     Join
@@ -62,6 +63,7 @@ type JoinBuilder struct {
 	conditionStmts []string
 }
 
+// Creates a new instance of the JoinBuilder struct
 func NewJoinBuilder() *JoinBuilder {
 	return &JoinBuilder{
 		driver:         DefaultDriver,
@@ -71,6 +73,7 @@ func NewJoinBuilder() *JoinBuilder {
 	}
 }
 
+// Creates a new instance of the JoinBuilder struct
 func newJoinBuilder() *JoinBuilder {
 	return &JoinBuilder{
 		driver:         DefaultDriver,
@@ -80,10 +83,12 @@ func newJoinBuilder() *JoinBuilder {
 	}
 }
 
+// Sets the tables and fields that query will select returning new instance of JoinBuilder
 func JSelect(tableName, targetField string) *JoinBuilder {
 	return newJoinBuilder().JSelect(tableName, targetField)
 }
 
+// Sets the tables and fields that query will select
 func (j *JoinBuilder) JSelect(tableName, targetField string) *JoinBuilder {
 	if tableExists(j.selectedTables, tableName) {
 		j.selectedTables = addTableField(j.selectedTables, tableName, targetField)
@@ -93,24 +98,22 @@ func (j *JoinBuilder) JSelect(tableName, targetField string) *JoinBuilder {
 	return j
 }
 
+// Sets the table that query will target
 func (j *JoinBuilder) JFrom(tableName string) *JoinBuilder {
 	j.fromTable = tableName
 	return j
 }
 
+// Sets the join table
 func (j *JoinBuilder) Join(typeOfJoin Join, tableName string) *JoinBuilder {
 	j.typeOfJoin = typeOfJoin
 	j.joinTable = tableName
 	return j
 }
 
+// Loads a query condition
 func (j *JoinBuilder) OnCondition(tableNameA, tableFieldA string, condition ConditionToken, tableNameB, tableFieldB string, arg interface{}) *JoinBuilder {
-	// if tableExists(j.onSelected, tableNameA) == true {
-	// 	j.onSelected = addTableField(j.onSelected, tableNameA, tableFieldA)
-	// } else {
-	// 	j.onSelected = append(j.onSelected, Table{name: tableNameA, fields: []string{tableFieldA}})
-	// }
-	//
+	// If no table B provided then we compare with arg
 	if tableNameB == "" && tableFieldB == "" {
 		if arg != "" {
 			var argFormat string
@@ -133,45 +136,41 @@ func (j *JoinBuilder) OnCondition(tableNameA, tableFieldA string, condition Cond
 	return j
 }
 
+// Sets join condition to "="
 func (j *JoinBuilder) Equal() *JoinBuilder {
 	j.condition = EQUAL
 	return j
 }
 
+// Sets join condition to "!="
 func (j *JoinBuilder) NotEqual() *JoinBuilder {
 	j.condition = NOTEQUAL
 	return j
 }
 
+// Toggles the ability to have multiple conditions
 func (j *JoinBuilder) And() *JoinBuilder {
 	j.and = true
 	return j
 }
 
-func tableExists(tables []Table, tableName string) bool {
-	for _, t := range tables {
-		if t.name == tableName {
-			return true
-		}
-	}
-
-	return false
+// Sets a new driver
+func (j *JoinBuilder) SetDriver(sqlDriver Driver) *JoinBuilder {
+	j.driver = sqlDriver
+	return j
 }
 
-func addTableField(table []Table, tableName, newField string) []Table {
-	for i := 0; i < len(table); i++ {
-		if table[i].name == tableName {
-			table[i].fields = append(table[i].fields, newField)
-		}
-	}
-
-	return table
+// Returns current driver being used
+func (j JoinBuilder) GetDriver() Driver {
+	return j.driver
 }
 
+// Returns the query in a string format
 func (j JoinBuilder) String() string {
 	return j.Build()
 }
 
+// Builds out the final query
 func (j *JoinBuilder) Build() string {
 	buf := newStringBuilder()
 
@@ -217,32 +216,26 @@ func (j *JoinBuilder) Build() string {
 			}
 		}
 	}
-
-	// if len(j.onSelected) > 0 {
-	// 	for idx, t := range j.onSelected {
-	// 		currentTable := t.name
-	// 		for i := 0; i < len(t.fields); i++ {
-	// 			currentValue := t.fields[i]
-	// 			buf.WriteString(fmt.Sprintf("%s.%s", currentTable, currentValue))
-	// 			// if i < len(v)-1 {
-	// 			// 	buf.WriteString(",")
-	// 			// }
-	// 			if idx < len(j.onSelected)-1 {
-	// 				buf.WriteLeadingString("= ")
-	// 			}
-	// 		}
-	// 	}
-	// }
 	buf.WriteString(";")
-
 	return buf.String()
 }
 
-func (j *JoinBuilder) SetDriver(sqlDriver Driver) *JoinBuilder {
-	j.driver = sqlDriver
-	return j
+func tableExists(tables []Table, tableName string) bool {
+	for _, t := range tables {
+		if t.name == tableName {
+			return true
+		}
+	}
+
+	return false
 }
 
-func (j JoinBuilder) GetDriver() Driver {
-	return j.driver
+func addTableField(table []Table, tableName, newField string) []Table {
+	for i := 0; i < len(table); i++ {
+		if table[i].name == tableName {
+			table[i].fields = append(table[i].fields, newField)
+		}
+	}
+
+	return table
 }

@@ -60,6 +60,17 @@ func (c *CreateTableBuilder) Define(value ...string) *CreateTableBuilder {
 	return c
 }
 
+// Sets a new driver
+func (c *CreateTableBuilder) SetDriver(sqlDriver Driver) *CreateTableBuilder {
+	c.driver = sqlDriver
+	return c
+}
+
+// Returns current driver being used
+func (c CreateTableBuilder) GetDriver() Driver {
+	return c.driver
+}
+
 // Returns query in a string format
 func (c *CreateTableBuilder) String() string {
 	return c.Build()
@@ -87,13 +98,4 @@ func (c *CreateTableBuilder) Build() string {
 	}
 	buf.WriteString(";")
 	return buf.builder.String()
-}
-
-func (c *CreateTableBuilder) SetDriver(sqlDriver Driver) *CreateTableBuilder {
-	c.driver = sqlDriver
-	return c
-}
-
-func (c CreateTableBuilder) GetDriver() Driver {
-	return c.driver
 }
