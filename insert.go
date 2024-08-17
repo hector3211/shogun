@@ -5,6 +5,18 @@ import (
 	"strings"
 )
 
+type InsertQuery interface {
+	Insert()
+	Columns()
+	Values()
+	OnConflict()
+	DoUpdate()
+	String()
+	Build()
+	SetDriver()
+	GetDriver()
+}
+
 type InsertBuilder struct {
 	driver      Driver
 	action      string

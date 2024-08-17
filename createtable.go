@@ -5,6 +5,16 @@ import (
 	"strings"
 )
 
+type CreateTableQuery interface {
+	CreateTable(tableName string) *CreateTableBuilder
+	IfNotExists() *CreateTableBuilder
+	Define(value string) *CreateTableBuilder
+	String() string
+	Build() string
+	SetDriver(sqlDriver Driver) *CreateIndexBuilder
+	GetDriver() string
+}
+
 type CreateTableBuilder struct {
 	driver      Driver
 	action      string
@@ -45,8 +55,8 @@ func (c *CreateTableBuilder) IfNotExists() *CreateTableBuilder {
 }
 
 // Sets table fields with their respected types
-func (c *CreateTableBuilder) Define(val ...string) *CreateTableBuilder {
-	c.columns = append(c.columns, val)
+func (c *CreateTableBuilder) Define(value ...string) *CreateTableBuilder {
+	c.columns = append(c.columns, value)
 	return c
 }
 

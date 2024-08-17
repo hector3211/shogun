@@ -2,6 +2,15 @@ package shogun
 
 import "fmt"
 
+type CreateIndexQuery interface {
+	Index(indexName string) *CreateIndexBuilder
+	On(tableName, field string) *CreateIndexBuilder
+	String() string
+	Build() string
+	SetDriver(sqlDriver Driver) *CreateIndexBuilder
+	GetDriver() string
+}
+
 type CreateIndexBuilder struct {
 	driver    Driver
 	action    string

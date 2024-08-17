@@ -5,6 +5,15 @@ import (
 	"strings"
 )
 
+type DeleteQuery interface {
+	Delete()
+	Where()
+	String()
+	Build()
+	SetDriver()
+	GetDriver()
+}
+
 type DeleteBuilder struct {
 	driver     Driver
 	tableName  string
