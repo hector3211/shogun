@@ -17,3 +17,23 @@ func TestTransaction(t *testing.T) {
 		t.Fatalf("TestTransaction failed! wanted %s got %s", query, transaction.Build())
 	}
 }
+
+func TestTransactionTwo(t *testing.T) {
+	query := "BEGIN TRANSACTION; UPDATE users SET name = 'maddog' WHERE name = 'hector'; UPDATE users SET name = 'maddog' WHERE name = 'hector'; INSERT INTO users (name) VALUES ('maddog'); COMMIT; ROLLBACK;"
+
+	update := Update("users").
+		Set(Equal("name", "maddog")).
+		Where(Equal("name", "hector"))
+
+	updateTwo := Update("users").
+		Set(Equal("name", "maddog")).
+		Where(Equal("name", "hector"))
+
+	insert := Insert("users").Columns("name").Values("maddog")
+
+	transaction := UpdateTransaction(update).UpdateTransaction(updateTwo).InsertTransaction(insert).Commit().RollBack()
+
+	if transaction.Build() != query {
+		t.Fatalf("TestTransactionTwo failed! wanted %s got %s", query, transaction.Build())
+	}
+}

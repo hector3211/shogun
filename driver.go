@@ -50,3 +50,9 @@ func (d Driver) NewJoinBuilder() *JoinBuilder {
 	t.SetDriver(d)
 	return t
 }
+
+func (d Driver) NewTransactionBuilder() *TransactionBuilder {
+	t := newTransactionBuilder()
+	t.SetDriver(d)
+	return t
+}

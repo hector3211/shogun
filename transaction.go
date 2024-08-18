@@ -19,6 +19,10 @@ type TransactionBuilder struct {
 }
 
 func NewTransactionBuilder() *TransactionBuilder {
+	return DefaultDriver.NewTransactionBuilder()
+}
+
+func newTransactionBuilder() *TransactionBuilder {
 	return &TransactionBuilder{
 		driver: DefaultDriver,
 		action: "BEGIN TRANSACTION",
@@ -27,29 +31,35 @@ func NewTransactionBuilder() *TransactionBuilder {
 	}
 }
 
-func InsertTransaction(insert *InsertBuilder) *TransactionBuilder {
-	return NewTransactionBuilder().InsertTransaction(insert)
-}
-
+// Sets the update statement returning new instance of TransactionBuilder
 func UpdateTransaction(update *UpdateBuilder) *TransactionBuilder {
 	return NewTransactionBuilder().UpdateTransaction(update)
 }
 
-func (t *TransactionBuilder) InsertTransaction(insert *InsertBuilder) *TransactionBuilder {
-	t.insert = append(t.insert, insert)
-	return t
+// Sets the Insert statement returning new instance of TransactionBuilder
+func InsertTransaction(insert *InsertBuilder) *TransactionBuilder {
+	return NewTransactionBuilder().InsertTransaction(insert)
 }
 
+// Loads up an update statement
 func (t *TransactionBuilder) UpdateTransaction(update *UpdateBuilder) *TransactionBuilder {
 	t.update = append(t.update, update)
 	return t
 }
 
+// Loads up an Insert statement
+func (t *TransactionBuilder) InsertTransaction(insert *InsertBuilder) *TransactionBuilder {
+	t.insert = append(t.insert, insert)
+	return t
+}
+
+// Sets COMMIT
 func (t *TransactionBuilder) Commit() *TransactionBuilder {
 	t.commit = true
 	return t
 }
 
+// Sets ROLLBACK
 func (t *TransactionBuilder) RollBack() *TransactionBuilder {
 	t.rollback = true
 	return t
@@ -66,24 +76,32 @@ func (t TransactionBuilder) GetDriver() Driver {
 	return t.driver
 }
 
+// Returns the query in a string format
 func (t TransactionBuilder) String() string {
 	return t.Build()
 }
 
+// Builds out the final query
 func (t TransactionBuilder) Build() string {
 	buf := newStringBuilder()
 	buf.WriteLeadingString(fmt.Sprintf("%s; ", t.action))
 
 	if len(t.update) > 0 {
-		for _, query := range t.update {
-			buf.WriteString(query.Build())
+		for i := 0; i < len(t.update); i++ {
+			query := t.update[i]
+			buf.WriteLeadingString(query.Build() + " ")
 		}
 	}
 
-	buf.WriteString(" ")
 	if len(t.insert) > 0 {
-		for _, query := range t.insert {
-			buf.WriteString(query.Build())
+		for i := 0; i < len(t.insert); i++ {
+			query := t.insert[i]
+			if i >= 1 {
+				buf.WriteLeadingString(query.Build() + " ")
+			} else {
+				buf.WriteString(query.Build())
+
+			}
 		}
 	}
 
