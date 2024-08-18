@@ -3,6 +3,10 @@ package shogun
 import "fmt"
 
 type TransactionQuery interface {
+	UpdateTransaction(update *UpdateBuilder) *TransactionBuilder
+	InsertTransaction(insert *InsertBuilder) *TransactionBuilder
+	Commit() *TransactionBuilder
+	RollBack() *TransactionBuilder
 	String() string
 	Build() string
 	SetDriver(sqlDriver Driver) *TransactionBuilder
