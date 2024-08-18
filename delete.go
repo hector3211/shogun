@@ -30,7 +30,7 @@ func newDeleteBuilder() *DeleteBuilder {
 	return &DeleteBuilder{
 		driver:     "",
 		tableName:  "",
-		conditions: [][]string{},
+		conditions: make(Conditions, 0),
 	}
 }
 

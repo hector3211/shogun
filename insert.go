@@ -39,6 +39,7 @@ func newInsertBuilder() *InsertBuilder {
 	return &InsertBuilder{
 		action:  "INSERT",
 		columns: make([]string, 0),
+		values:  make([]interface{}, 0),
 		upsert:  false,
 	}
 }

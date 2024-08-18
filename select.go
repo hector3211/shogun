@@ -39,10 +39,11 @@ func NewSelectBuilder() *SelectBuilder {
 // Creates a new instance of the SelectBuilder struct
 func newSelectbuilder() *SelectBuilder {
 	return &SelectBuilder{
-		driver: DefaultDriver,
-		tables: make([]string, 0),
-		fields: make([]string, 0),
-		limit:  0,
+		driver:      DefaultDriver,
+		tables:      make([]string, 0),
+		fields:      make([]string, 0),
+		orderFields: make([]string, 0),
+		limit:       0,
 	}
 }
 

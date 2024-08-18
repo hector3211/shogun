@@ -34,6 +34,7 @@ func newCreateTableBuilder() *CreateTableBuilder {
 		driver:      DefaultDriver,
 		action:      "CREATE TABLE",
 		ifNotExists: false,
+		columns:     make([][]string, 0),
 	}
 }
 

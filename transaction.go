@@ -22,6 +22,8 @@ func NewTransactionBuilder() *TransactionBuilder {
 	return &TransactionBuilder{
 		driver: DefaultDriver,
 		action: "BEGIN TRANSACTION",
+		update: make([]*UpdateBuilder, 0),
+		insert: make([]*InsertBuilder, 0),
 	}
 }
 

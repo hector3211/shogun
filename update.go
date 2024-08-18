@@ -29,7 +29,9 @@ func NewUpdateBuilder() *UpdateBuilder {
 
 func newUpdateBuilder() *UpdateBuilder {
 	return &UpdateBuilder{
-		action: "UPDATE",
+		action:     "UPDATE",
+		setCond:    make(Conditions, 0),
+		conditions: make(Conditions, 0),
 	}
 }
 
