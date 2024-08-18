@@ -12,6 +12,7 @@ const (
 	NOTEQUAL
 	LESSTHAN
 	GREATERTHAN
+	BETWEEN
 )
 
 func (c ConditionToken) String() string {
@@ -24,6 +25,8 @@ func (c ConditionToken) String() string {
 		return "<"
 	case GREATERTHAN:
 		return ">"
+	case BETWEEN:
+		return "BETWEEN"
 	default:
 		return ""
 	}
@@ -47,6 +50,10 @@ func (c Conditions) GreaterThan(field string, value interface{}) string {
 	return stringifyStatement(field, GREATERTHAN, value)
 }
 
+func (c Conditions) Between(field string, value interface{}) string {
+	return stringifyStatement(field, BETWEEN, value)
+}
+
 func (c Conditions) And() string {
 	buf := newStringBuilder()
 	buf.WriteString("AND")
@@ -54,7 +61,6 @@ func (c Conditions) And() string {
 }
 
 func (c Conditions) Or() string {
-
 	buf := newStringBuilder()
 	buf.WriteString("OR")
 	return buf.String()
@@ -74,6 +80,10 @@ func LessThan(field string, value interface{}) string {
 
 func GreaterThan(field string, value interface{}) string {
 	return stringifyStatement(field, GREATERTHAN, value)
+}
+
+func Between(field string, value interface{}) string {
+	return stringifyStatement(field, BETWEEN, value)
 }
 
 func And() string {

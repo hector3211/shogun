@@ -8,8 +8,7 @@ import (
 type Join int
 
 const (
-	NOJOIN Join = iota
-	INNER
+	INNER Join = iota
 	FULL
 	LEFT
 	RIGHT
@@ -73,7 +72,7 @@ func NewJoinBuilder() *JoinBuilder {
 func newJoinBuilder() *JoinBuilder {
 	return &JoinBuilder{
 		driver:         DefaultDriver,
-		typeOfJoin:     NOJOIN,
+		typeOfJoin:     INNER,
 		selectedTables: make([]Table, 0),
 		conditionStmts: make([]string, 0),
 	}
@@ -211,9 +210,7 @@ func (j *JoinBuilder) Build() string {
 	}
 
 	// Join
-	if j.typeOfJoin != NOJOIN {
-		buf.WriteLeadingString(fmt.Sprintf("%s JOIN %s ", j.typeOfJoin.String(), j.joinTable))
-	}
+	buf.WriteLeadingString(fmt.Sprintf("%s JOIN %s ", j.typeOfJoin.String(), j.joinTable))
 
 	// On
 	if len(j.conditionStmts) > 0 {

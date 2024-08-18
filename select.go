@@ -28,6 +28,7 @@ type SelectBuilder struct {
 	Conditions
 	distinct bool
 	limit    int
+	groupBy  []string
 	order    string
 }
 
@@ -43,6 +44,7 @@ func newSelectbuilder() *SelectBuilder {
 		tables:      make([]string, 0),
 		fields:      make([]string, 0),
 		orderFields: make([]string, 0),
+		groupBy:     make([]string, 0),
 		limit:       0,
 	}
 }
@@ -78,6 +80,13 @@ func (s *SelectBuilder) From(tables ...string) *SelectBuilder {
 // Sets the fields that will be selecting
 func (s *SelectBuilder) Where(conditions ...string) *SelectBuilder {
 	s.Conditions = append(s.Conditions, conditions)
+	return s
+}
+
+// TODO: Finish groupby and having
+// Sets a Group by to the query
+func (s *SelectBuilder) GroupBy(columns ...string) *SelectBuilder {
+	s.groupBy = columns
 	return s
 }
 
