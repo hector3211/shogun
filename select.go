@@ -9,6 +9,7 @@ type SelectQuery interface {
 	Select(columns ...string) *SelectBuilder
 	From(tables ...string) *SelectBuilder
 	Where(conditions ...string) *SelectBuilder
+	Distinct() *SelectBuilder
 	OrderBy(columns ...string) *SelectBuilder
 	Asc() *SelectBuilder
 	Desc() *SelectBuilder
@@ -25,6 +26,7 @@ type SelectBuilder struct {
 	fields      []string
 	orderFields []string
 	conditions  Conditions
+	distinct    bool
 	limit       int
 	order       string
 }
@@ -52,6 +54,12 @@ func Select(columns ...string) *SelectBuilder {
 // Sets the fields that query will select
 func (s *SelectBuilder) Select(columns ...string) *SelectBuilder {
 	s.fields = columns
+	return s
+}
+
+func (s *SelectBuilder) Distinct() *SelectBuilder {
+	s.distinct = true
+
 	return s
 }
 
@@ -116,6 +124,9 @@ func (s *SelectBuilder) String() string {
 func (s *SelectBuilder) Build() string {
 	buf := newStringBuilder()
 	buf.WriteLeadingString("SELECT ")
+	if s.distinct {
+		buf.WriteLeadingString("DISTINCT ")
+	}
 
 	if len(s.fields) > 1 {
 		buf.WriteString(fmt.Sprintf("(%s)", strings.Join(s.fields, ",")))

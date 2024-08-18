@@ -6,11 +6,6 @@ import (
 )
 
 type Conditions [][]string
-
-//	func (w *WhereCond) Where(conditions ...string) *WhereCond {
-//		w.Cond = append(w.Cond, conditions)
-//		return w
-//	}
 type ConditionToken int
 
 const (
@@ -36,19 +31,19 @@ func (c ConditionToken) String() string {
 }
 
 func Equal(field string, value interface{}) string {
-	return stringifyStatement(field, "=", value)
+	return stringifyStatement(field, EQUAL, value)
 }
 
 func NotEqual(field string, value interface{}) string {
-	return stringifyStatement(field, "!=", value)
+	return stringifyStatement(field, NOTEQUAL, value)
 }
 
 func LessThan(field string, value interface{}) string {
-	return stringifyStatement(field, "<", value)
+	return stringifyStatement(field, LESSTHAN, value)
 }
 
 func GreaterThan(field string, value interface{}) string {
-	return stringifyStatement(field, ">", value)
+	return stringifyStatement(field, GREATERTHAN, value)
 }
 
 func And() string {
@@ -63,20 +58,20 @@ func Or() string {
 	return buf.String()
 }
 
-func stringifyStatement(field, action string, value interface{}) string {
+func stringifyStatement(field string, condition ConditionToken, value interface{}) string {
 	var statement string
 	switch value.(type) {
 	case int:
-		statement = fmt.Sprintf("%s %s %d", field, action, value)
+		statement = fmt.Sprintf("%s %s %d", field, condition.String(), value)
 	case float32:
-		statement = fmt.Sprintf("%s %s %f", field, action, value)
+		statement = fmt.Sprintf("%s %s %f", field, condition.String(), value)
 	case string:
-		statement = fmt.Sprintf("%s %s '%s'", field, action, value)
+		statement = fmt.Sprintf("%s %s '%s'", field, condition.String(), value)
 	case bool:
 		strBool := fmt.Sprintf("%v", value)
-		statement = fmt.Sprintf("%s %s %s", field, action, strings.ToUpper(strBool))
+		statement = fmt.Sprintf("%s %s %s", field, condition.String(), strings.ToUpper(strBool))
 	default:
-		statement = fmt.Sprintf("%s %s %v", field, action, value)
+		statement = fmt.Sprintf("%s %s %v", field, condition.String(), value)
 	}
 
 	return statement

@@ -16,11 +16,11 @@ type UpdateQuery interface {
 }
 
 type UpdateBuilder struct {
-	driver  Driver
-	action  string
-	table   string
-	setCond Conditions
-	Conditions
+	driver     Driver
+	action     string
+	table      string
+	setCond    Conditions
+	conditions Conditions
 }
 
 func NewUpdateBuilder() *UpdateBuilder {
@@ -52,7 +52,7 @@ func (u *UpdateBuilder) Set(values ...string) *UpdateBuilder {
 
 // Sets the fields that will be updating
 func (u *UpdateBuilder) Where(conditions ...string) *UpdateBuilder {
-	u.Conditions = append(u.Conditions, conditions)
+	u.conditions = append(u.conditions, conditions)
 	return u
 }
 
@@ -84,9 +84,9 @@ func (u *UpdateBuilder) Build() string {
 		}
 	}
 
-	if len(u.Conditions) > 0 {
+	if len(u.conditions) > 0 {
 		buf.WriteLeadingString("WHERE ")
-		for _, args := range u.Conditions {
+		for _, args := range u.conditions {
 			buf.WriteString(fmt.Sprintf("%s", strings.Join(args, " ")))
 		}
 	}
