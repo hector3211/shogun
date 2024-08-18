@@ -25,10 +25,10 @@ type SelectBuilder struct {
 	tables      []string
 	fields      []string
 	orderFields []string
-	conditions  Conditions
-	distinct    bool
-	limit       int
-	order       string
+	Conditions
+	distinct bool
+	limit    int
+	order    string
 }
 
 // Creates a new instance of the SelectBuilder struct
@@ -77,7 +77,7 @@ func (s *SelectBuilder) From(tables ...string) *SelectBuilder {
 
 // Sets the fields that will be selecting
 func (s *SelectBuilder) Where(conditions ...string) *SelectBuilder {
-	s.conditions = append(s.conditions, conditions)
+	s.Conditions = append(s.Conditions, conditions)
 	return s
 }
 
@@ -147,9 +147,9 @@ func (s *SelectBuilder) Build() string {
 		buf.WriteString(fmt.Sprintf("%s", s.tables[0]))
 	}
 
-	if len(s.conditions) > 0 {
+	if len(s.Conditions) > 0 {
 		buf.WriteLeadingString("WHERE ")
-		for _, args := range s.conditions {
+		for _, args := range s.Conditions {
 			buf.WriteString(fmt.Sprintf("%s", strings.Join(args, " ")))
 		}
 	}

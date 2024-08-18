@@ -15,9 +15,9 @@ type DeleteQuery interface {
 }
 
 type DeleteBuilder struct {
-	driver     Driver
-	tableName  string
-	conditions Conditions
+	driver    Driver
+	tableName string
+	Conditions
 }
 
 // creates new instance of DeleteBuilder
@@ -30,7 +30,7 @@ func newDeleteBuilder() *DeleteBuilder {
 	return &DeleteBuilder{
 		driver:     "",
 		tableName:  "",
-		conditions: make(Conditions, 0),
+		Conditions: make(Conditions, 0),
 	}
 }
 
@@ -47,7 +47,7 @@ func (d *DeleteBuilder) Delete(tableName string) *DeleteBuilder {
 
 // Sets the fields that the query will filter from
 func (d *DeleteBuilder) Where(conditions ...string) *DeleteBuilder {
-	d.conditions = append(d.conditions, conditions)
+	d.Conditions = append(d.Conditions, conditions)
 	return d
 }
 
@@ -76,9 +76,9 @@ func (d *DeleteBuilder) Build() string {
 		buf.WriteString(fmt.Sprintf("%s", d.tableName))
 	}
 
-	if len(d.conditions) > 0 {
+	if len(d.Conditions) > 0 {
 		buf.WriteLeadingString("WHERE ")
-		for _, args := range d.conditions {
+		for _, args := range d.Conditions {
 			buf.WriteString(fmt.Sprintf("%s", strings.Join(args, " ")))
 		}
 	}

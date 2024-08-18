@@ -14,17 +14,24 @@ func TestDelete(t *testing.T) {
 
 func TestDeleteTwo(t *testing.T) {
 	query := "DELETE users WHERE id = 1 AND name = 'hector' AND verifyEmail = TRUE;"
-
 	stmt := Delete("users").Where(
 		Equal("id", 1),
 		And(),
 		Equal("name", "hector"),
 		And(),
 		Equal("verifyEmail", true),
-	).
-		Build()
+	)
 
-	if stmt != query {
+	// stmt := Delete("users").Where(
+	// 	Equal("id", 1),
+	// 	And(),
+	// 	Equal("name", "hector"),
+	// 	And(),
+	// 	Equal("verifyEmail", true),
+	// ).
+	// 	Build()
+
+	if stmt.Build() != query {
 		t.Fatalf("TestDeleteTwo failed! wanted %s got %s", query, stmt)
 	}
 }

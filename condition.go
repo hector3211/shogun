@@ -5,7 +5,6 @@ import (
 	"strings"
 )
 
-type Conditions [][]string
 type ConditionToken int
 
 const (
@@ -28,6 +27,37 @@ func (c ConditionToken) String() string {
 	default:
 		return ""
 	}
+}
+
+type Conditions [][]string
+
+func (c Conditions) Equal(field string, value interface{}) string {
+	return stringifyStatement(field, EQUAL, value)
+}
+
+func (c Conditions) NotEqual(field string, value interface{}) string {
+	return stringifyStatement(field, NOTEQUAL, value)
+}
+
+func (c Conditions) LessThan(field string, value interface{}) string {
+	return stringifyStatement(field, LESSTHAN, value)
+}
+
+func (c Conditions) GreaterThan(field string, value interface{}) string {
+	return stringifyStatement(field, GREATERTHAN, value)
+}
+
+func (c Conditions) And() string {
+	buf := newStringBuilder()
+	buf.WriteString("AND")
+	return buf.String()
+}
+
+func (c Conditions) Or() string {
+
+	buf := newStringBuilder()
+	buf.WriteString("OR")
+	return buf.String()
 }
 
 func Equal(field string, value interface{}) string {
@@ -59,20 +89,18 @@ func Or() string {
 }
 
 func stringifyStatement(field string, condition ConditionToken, value interface{}) string {
-	var statement string
+	buf := newStringBuilder()
 	switch value.(type) {
-	case int:
-		statement = fmt.Sprintf("%s %s %d", field, condition.String(), value)
-	case float32:
-		statement = fmt.Sprintf("%s %s %f", field, condition.String(), value)
+	case int, float32:
+		buf.WriteString(fmt.Sprintf("%s %s %d", field, condition.String(), value))
 	case string:
-		statement = fmt.Sprintf("%s %s '%s'", field, condition.String(), value)
+		buf.WriteString(fmt.Sprintf("%s %s '%s'", field, condition.String(), value))
 	case bool:
 		strBool := fmt.Sprintf("%v", value)
-		statement = fmt.Sprintf("%s %s %s", field, condition.String(), strings.ToUpper(strBool))
+		buf.WriteString(fmt.Sprintf("%s %s %s", field, condition.String(), strings.ToUpper(strBool)))
 	default:
-		statement = fmt.Sprintf("%s %s %v", field, condition.String(), value)
+		buf.WriteString(fmt.Sprintf("%s %s %v", field, condition.String(), value))
 	}
 
-	return statement
+	return buf.String()
 }
