@@ -7,9 +7,11 @@ import (
 
 type SelectQuery interface {
 	Select(columns ...string) *SelectBuilder
+	Distinct() *SelectBuilder
 	From(tables ...string) *SelectBuilder
 	Where(conditions ...string) *SelectBuilder
-	Distinct() *SelectBuilder
+	GroupBy(columns ...string) *SelectBuilder
+	Having(conditions ...string) *SelectBuilder
 	OrderBy(columns ...string) *SelectBuilder
 	Asc() *SelectBuilder
 	Desc() *SelectBuilder
@@ -21,15 +23,16 @@ type SelectQuery interface {
 }
 
 type SelectBuilder struct {
-	driver      Driver
-	tables      []string
-	fields      []string
-	orderFields []string
-	Conditions
-	distinct bool
-	limit    int
-	groupBy  []string
-	order    string
+	driver           Driver
+	tables           []string
+	fields           []string
+	orderFields      []string
+	whereConditions  Conditions
+	distinct         bool
+	limit            int
+	groupBy          []string
+	havingConditions Conditions
+	order            string
 }
 
 // Creates a new instance of the SelectBuilder struct
@@ -40,12 +43,14 @@ func NewSelectBuilder() *SelectBuilder {
 // Creates a new instance of the SelectBuilder struct
 func newSelectbuilder() *SelectBuilder {
 	return &SelectBuilder{
-		driver:      DefaultDriver,
-		tables:      make([]string, 0),
-		fields:      make([]string, 0),
-		orderFields: make([]string, 0),
-		groupBy:     make([]string, 0),
-		limit:       0,
+		driver:           DefaultDriver,
+		tables:           make([]string, 0),
+		fields:           make([]string, 0),
+		orderFields:      make([]string, 0),
+		whereConditions:  make(Conditions, 0),
+		groupBy:          make([]string, 0),
+		havingConditions: make(Conditions, 0),
+		limit:            0,
 	}
 }
 
@@ -79,14 +84,17 @@ func (s *SelectBuilder) From(tables ...string) *SelectBuilder {
 
 // Sets the fields that will be selecting
 func (s *SelectBuilder) Where(conditions ...string) *SelectBuilder {
-	s.Conditions = append(s.Conditions, conditions)
+	s.whereConditions = append(s.whereConditions, conditions)
 	return s
 }
 
-// TODO: Finish groupby and having
-// Sets a Group by to the query
 func (s *SelectBuilder) GroupBy(columns ...string) *SelectBuilder {
 	s.groupBy = columns
+	return s
+}
+
+func (s *SelectBuilder) Having(conditions ...string) *SelectBuilder {
+	s.havingConditions = append(s.havingConditions, conditions)
 	return s
 }
 
@@ -139,10 +147,10 @@ func (s *SelectBuilder) Build() string {
 	}
 
 	if len(s.fields) > 1 {
-		buf.WriteString(fmt.Sprintf("(%s)", strings.Join(s.fields, ",")))
+		buf.WriteString(fmt.Sprintf("%s", strings.Join(s.fields, ",")))
 	} else {
 		if s.fields[0] != "*" {
-			buf.WriteString(fmt.Sprintf("(%s)", s.fields[0]))
+			buf.WriteString(fmt.Sprintf("%s", s.fields[0]))
 		} else {
 			buf.WriteString(fmt.Sprintf("%s", "*"))
 		}
@@ -151,14 +159,26 @@ func (s *SelectBuilder) Build() string {
 	buf.WriteLeadingString("FROM ")
 
 	if len(s.tables) > 1 {
-		buf.WriteString(fmt.Sprintf("(%s)", strings.Join(s.tables, ",")))
+		buf.WriteString(fmt.Sprintf("%s", strings.Join(s.tables, ",")))
 	} else {
 		buf.WriteString(fmt.Sprintf("%s", s.tables[0]))
 	}
 
-	if len(s.Conditions) > 0 {
+	if len(s.whereConditions) > 0 {
 		buf.WriteLeadingString("WHERE ")
-		for _, args := range s.Conditions {
+		for _, args := range s.whereConditions {
+			buf.WriteString(fmt.Sprintf("%s", strings.Join(args, " ")))
+		}
+	}
+
+	if len(s.groupBy) > 0 {
+		buf.WriteLeadingString("GROUP BY ")
+		buf.WriteString(fmt.Sprintf("%s", strings.Join(s.groupBy, ",")))
+	}
+
+	if len(s.havingConditions) > 0 {
+		buf.WriteLeadingString("HAVING ")
+		for _, args := range s.havingConditions {
 			buf.WriteString(fmt.Sprintf("%s", strings.Join(args, " ")))
 		}
 	}

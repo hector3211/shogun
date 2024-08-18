@@ -32,26 +32,53 @@ func (c ConditionToken) String() string {
 	}
 }
 
+type CalculationToken int
+
+const (
+	SUM CalculationToken = iota
+	COUNT
+	AVG
+	MAX
+	MIN
+)
+
+func (c CalculationToken) String() string {
+	switch c {
+	case SUM:
+		return "SUM"
+	case COUNT:
+		return "COUNT"
+	case AVG:
+		return "AVG"
+	case MAX:
+		return "MAX"
+	case MIN:
+		return "MIN"
+	default:
+		return ""
+	}
+}
+
 type Conditions [][]string
 
 func (c Conditions) Equal(field string, value interface{}) string {
-	return stringifyStatement(field, EQUAL, value)
+	return stringifyStatement(field, EQUAL, value, nil)
 }
 
 func (c Conditions) NotEqual(field string, value interface{}) string {
-	return stringifyStatement(field, NOTEQUAL, value)
+	return stringifyStatement(field, NOTEQUAL, value, nil)
 }
 
 func (c Conditions) LessThan(field string, value interface{}) string {
-	return stringifyStatement(field, LESSTHAN, value)
+	return stringifyStatement(field, LESSTHAN, value, nil)
 }
 
 func (c Conditions) GreaterThan(field string, value interface{}) string {
-	return stringifyStatement(field, GREATERTHAN, value)
+	return stringifyStatement(field, GREATERTHAN, value, nil)
 }
 
 func (c Conditions) Between(field string, value interface{}) string {
-	return stringifyStatement(field, BETWEEN, value)
+	return stringifyStatement(field, BETWEEN, value, nil)
 }
 
 func (c Conditions) And() string {
@@ -67,23 +94,33 @@ func (c Conditions) Or() string {
 }
 
 func Equal(field string, value interface{}) string {
-	return stringifyStatement(field, EQUAL, value)
+	return stringifyStatement(field, EQUAL, value, nil)
 }
 
 func NotEqual(field string, value interface{}) string {
-	return stringifyStatement(field, NOTEQUAL, value)
+	return stringifyStatement(field, NOTEQUAL, value, nil)
 }
 
 func LessThan(field string, value interface{}) string {
-	return stringifyStatement(field, LESSTHAN, value)
+	return stringifyStatement(field, LESSTHAN, value, nil)
 }
 
 func GreaterThan(field string, value interface{}) string {
-	return stringifyStatement(field, GREATERTHAN, value)
+	return stringifyStatement(field, GREATERTHAN, value, nil)
 }
 
 func Between(field string, value interface{}) string {
-	return stringifyStatement(field, BETWEEN, value)
+	return stringifyStatement(field, BETWEEN, value, nil)
+}
+
+func Sum(field string, condition ConditionToken, value interface{}) string {
+	key := SUM
+	return stringifyStatement(field, condition, value, &key)
+}
+
+func Count(field string, condition ConditionToken, value interface{}) string {
+	key := COUNT
+	return stringifyStatement(field, condition, value, &key)
 }
 
 func And() string {
@@ -98,18 +135,33 @@ func Or() string {
 	return buf.String()
 }
 
-func stringifyStatement(field string, condition ConditionToken, value interface{}) string {
+func stringifyStatement(field string, condition ConditionToken, value interface{}, calculation *CalculationToken) string {
 	buf := newStringBuilder()
-	switch value.(type) {
-	case int, float32:
-		buf.WriteString(fmt.Sprintf("%s %s %d", field, condition.String(), value))
-	case string:
-		buf.WriteString(fmt.Sprintf("%s %s '%s'", field, condition.String(), value))
-	case bool:
-		strBool := fmt.Sprintf("%v", value)
-		buf.WriteString(fmt.Sprintf("%s %s %s", field, condition.String(), strings.ToUpper(strBool)))
-	default:
-		buf.WriteString(fmt.Sprintf("%s %s %v", field, condition.String(), value))
+
+	if calculation == nil {
+		switch value.(type) {
+		case int, float32:
+			buf.WriteString(fmt.Sprintf("%s %s %d", field, condition.String(), value))
+		case string:
+			buf.WriteString(fmt.Sprintf("%s %s '%s'", field, condition.String(), value))
+		case bool:
+			strBool := fmt.Sprintf("%v", value)
+			buf.WriteString(fmt.Sprintf("%s %s %s", field, condition.String(), strings.ToUpper(strBool)))
+		default:
+			buf.WriteString(fmt.Sprintf("%s %s %v", field, condition.String(), value))
+		}
+	} else {
+		switch value.(type) {
+		case int, float32:
+			buf.WriteString(fmt.Sprintf("%s(%s) %s %d", calculation, field, condition.String(), value))
+		case string:
+			buf.WriteString(fmt.Sprintf("%s(%s) %s '%s'", calculation, field, condition.String(), value))
+		case bool:
+			strBool := fmt.Sprintf("%v", value)
+			buf.WriteString(fmt.Sprintf("%s(%s) %s %s", calculation, field, condition.String(), strings.ToUpper(strBool)))
+		default:
+			buf.WriteString(fmt.Sprintf("%s(%s) %s %v", calculation, field, condition.String(), value))
+		}
 	}
 
 	return buf.String()

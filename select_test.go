@@ -33,7 +33,7 @@ func TestSelectOne(t *testing.T) {
 }
 
 func TestSelectTwo(t *testing.T) {
-	query := "SELECT (id) FROM users;"
+	query := "SELECT id FROM users;"
 	stmt := NewSelectBuilder().Select("id").From("users").Build()
 
 	if stmt != query {
@@ -42,7 +42,7 @@ func TestSelectTwo(t *testing.T) {
 }
 
 func TestSelectThree(t *testing.T) {
-	query := "SELECT (id,name) FROM users;"
+	query := "SELECT id,name FROM users;"
 	stmt := NewSelectBuilder().Select("id,name").From("users").Build()
 
 	if stmt != query {
@@ -51,7 +51,7 @@ func TestSelectThree(t *testing.T) {
 }
 
 func TestSelectFour(t *testing.T) {
-	query := "SELECT (id,name) FROM (users,products);"
+	query := "SELECT id,name FROM users,products;"
 	stmt := NewSelectBuilder().Select("id", "name").From("users", "products").Build()
 
 	if stmt != query {
@@ -60,7 +60,7 @@ func TestSelectFour(t *testing.T) {
 }
 
 func TestSelectFive(t *testing.T) {
-	query := `SELECT (id,name) FROM users WHERE name = 'hector';`
+	query := `SELECT id,name FROM users WHERE name = 'hector';`
 	stmt := NewSelectBuilder().
 		Select("id", "name").
 		From("users").
@@ -75,7 +75,7 @@ func TestSelectFive(t *testing.T) {
 }
 
 func TestSelectWitNotEqual(t *testing.T) {
-	query := `SELECT (id,name) FROM users WHERE name != 'hector';`
+	query := `SELECT id,name FROM users WHERE name != 'hector';`
 	stmt := NewSelectBuilder().
 		Select("id", "name").
 		From("users").
@@ -90,7 +90,7 @@ func TestSelectWitNotEqual(t *testing.T) {
 }
 
 func TestSelectWithAnd(t *testing.T) {
-	query := `SELECT (id,name) FROM users WHERE name = 'hector' AND id < 10;`
+	query := `SELECT id,name FROM users WHERE name = 'hector' AND id < 10;`
 	stmt := NewSelectBuilder().
 		Select("id", "name").
 		From("users").
@@ -107,7 +107,7 @@ func TestSelectWithAnd(t *testing.T) {
 }
 
 func TestSelectWithOr(t *testing.T) {
-	query := `SELECT (id,name) FROM users WHERE name = 'hector' OR id > 10;`
+	query := `SELECT id,name FROM users WHERE name = 'hector' OR id > 10;`
 	stmt := NewSelectBuilder().
 		Select("id", "name").
 		From("users").
@@ -143,4 +143,15 @@ func TestSelectOrderTwo(t *testing.T) {
 	if stmt != query {
 		t.Fatalf("TestSelectOrder failed wanted %s got %s", query, stmt)
 	}
+}
+
+func TestSelectGroubyAndHaving(t *testing.T) {
+	query := "SELECT sales_person_id,product_id FROM sales GROUP BY sales_person_id,product_id HAVING COUNT(*) > 10;"
+
+	stmt := Select("sales_person_id", "product_id").From("sales").GroupBy("sales_person_id", "product_id").Having(Count("*", GREATERTHAN, 10))
+
+	if stmt.Build() != query {
+		t.Fatalf("TestSelectGroubyAndHaving failed! wanted %s got %s", query, stmt.Build())
+	}
+
 }
