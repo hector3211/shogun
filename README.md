@@ -128,4 +128,18 @@ stmt := NewJoinBuilder().
 fmt.Println(stmt.Build())
 // OUTPUT
 // "SELECT orders.orders_id,orders.orders_date,customers.customers_name FROM orders RIGHT JOIN customers ON orders.customer_id = customers.customers_id AND orders.customer_id != customers.customers_id;"
+
+stmtTwo := NewJoinBuilder().
+    JSelect("employees", "id").
+    JSelect("employees", "name").
+    JSelect("departments", "name").
+    JFrom("employees").
+    Join(INNER, "departments").
+    OnCondition("employees", "department_id", EQUAL, "departments","id", nil).
+    And().
+    OnCondition("employees", "name", EQUAL, "", "", "john")
+
+fmt.Println(stmtTwo.Build())
+// OUTPUT
+// "SELECT employees.id,employees.name,departments.name FROM employees INNER JOIN departments ON employees.department_id = departments.id AND employees.name = 'john';"
 ```
