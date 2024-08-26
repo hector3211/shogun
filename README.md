@@ -27,7 +27,11 @@ fmt.Println(stmtTwo.Build())
 
 
 // Create an UPSERT
-stmtThree := Insert("users").Columns("id", "name").Values(1, "Alice").OnConflict("id").DoUpdate("name", "NewAlice")
+stmtThree := Insert("users").
+    Columns("id", "name").
+    Values(1, "Alice").
+    OnConflict("id").
+    DoUpdate("name", "NewAlice")
 
 fmt.Println(stmtThree.Build())
 // OUTPUT
