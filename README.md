@@ -4,6 +4,14 @@
 
 A simple and light SQL query builder
 
+### Installation
+
+---
+
+```zsh
+go get github.com/hector3211/Shogun
+```
+
 ### Examples
 
 ---
