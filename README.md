@@ -9,7 +9,7 @@ A simple and light SQL query builder
 ---
 
 ```zsh
-go get github.com/hector3211/Shogun
+go get github.com/hector3211/shogun
 ```
 
 ### Examples
