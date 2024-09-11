@@ -54,13 +54,14 @@ type JoinQuery interface {
 
 type JoinBuilder struct {
 	driver         Driver
-	typeOfJoin     Join
-	selectedTables []Table
 	fromTable      string
 	joinTable      string
-	and            bool
-	condition      ConditionToken
+	selectedTables []Table
 	conditionStmts []string
+	whereCondition []string
+	typeOfJoin     Join
+	condition      ConditionToken
+	and            bool
 }
 
 // Creates a new instance of the JoinBuilder struct
@@ -136,6 +137,20 @@ func (j *JoinBuilder) OnCondition(tableNameA, tableFieldA string, condition Cond
 	}
 
 	j.conditionStmts = append(j.conditionStmts, fmt.Sprintf("%s.%s %s %s.%s", tableNameA, tableFieldA, condition.String(), tableNameB, tableFieldB))
+	return j
+}
+
+func (j *JoinBuilder) JWhere(tableName, tableField string, condition ConditionToken, value interface{}) *JoinBuilder {
+	var argFormat string
+	switch v := value.(type) {
+	case string:
+		argFormat = fmt.Sprintf("'%s'", v)
+	case int, float32, float64:
+		argFormat = fmt.Sprintf("%d", v)
+	case bool:
+		argFormat = strings.ToUpper(fmt.Sprintf("%v", v))
+	}
+	j.whereCondition = append(j.whereCondition, fmt.Sprintf("%s.%s %s %s", tableName, tableField, condition.String(), argFormat))
 	return j
 }
 
@@ -221,6 +236,12 @@ func (j *JoinBuilder) Build() string {
 				buf.WriteLeadingString("AND ")
 			}
 		}
+	}
+
+	// Where
+	if len(j.whereCondition) > 0 {
+		buf.WriteLeadingString("WHERE ")
+		buf.WriteString(strings.Join(j.whereCondition, " "))
 	}
 	buf.WriteString(";")
 	return buf.String()
