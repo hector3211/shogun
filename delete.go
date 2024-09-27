@@ -1,7 +1,6 @@
 package shogun
 
 import (
-	"fmt"
 	"strings"
 )
 
@@ -71,15 +70,16 @@ func (d *DeleteBuilder) String() string {
 func (d *DeleteBuilder) Build() string {
 	buf := newStringBuilder()
 	buf.WriteLeadingString("DELETE ")
+	buf.WriteLeadingString("FROM ")
 
 	if d.tableName != "" {
-		buf.WriteString(fmt.Sprintf("%s", d.tableName))
+		buf.WriteString(d.tableName)
 	}
 
 	if len(d.Conditions) > 0 {
 		buf.WriteLeadingString("WHERE ")
 		for _, args := range d.Conditions {
-			buf.WriteString(fmt.Sprintf("%s", strings.Join(args, " ")))
+			buf.WriteString(strings.Join(args, " "))
 		}
 	}
 
