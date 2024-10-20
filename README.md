@@ -124,9 +124,8 @@ fmt.Println(stmtTwo.String())
 
 ```go
 stmt := NewJoinBuilder().
-    JSelect("orders", "orders_id").
+    JSelect("orders", "orders_id","orders_date").
     JSelect("customers", "customers_name").
-    JSelect("orders", "orders_date").
     JFrom("orders").
     Join(RIGHT, "customers").
     OnCondition("orders.customer_id", EQUAL, "customers.customers_id").
@@ -141,8 +140,7 @@ fmt.Println(stmt.Build())
 // ON orders.customer_id = customers.customers_id AND orders.customer_id != customers.customers_id;"
 
 stmtTwo := NewJoinBuilder().
-    JSelect("employees", "id").
-    JSelect("employees", "name").
+    JSelect("employees", "id","name").
     JSelect("departments", "name").
     JFrom("employees").
     Join(INNER, "departments").
