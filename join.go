@@ -41,7 +41,14 @@ type JoinQuery interface {
 	JSelect(tableName, targetField string) *JoinBuilder
 	JFrom(tableName string) *JoinBuilder
 	Join(typeOfJoin Join, tableName string) *JoinBuilder
-	OnCondition(tableNameA, tableFieldA string, condition ConditionToken, tableNameB, tableFieldB string, arg interface{}) *JoinBuilder
+	OnCondition(
+		tableNameA,
+		tableFieldA string,
+		condition ConditionToken,
+		tableNameB,
+		tableFieldB string,
+		arg interface{},
+	) *JoinBuilder
 	Equal() *JoinBuilder
 	NotEqual() *JoinBuilder
 	And() *JoinBuilder
@@ -80,38 +87,24 @@ func newJoinBuilder() *JoinBuilder {
 }
 
 // Sets the tables and fields that query will select returning new instance of JoinBuilder
-func JSelect(tableName, targetField string) *JoinBuilder {
-	return newJoinBuilder().JSelect(tableName, targetField)
+func JSelect(tableName string, fields ...string) *JoinBuilder {
+	return newJoinBuilder().JSelect(tableName, fields...)
 }
 
 // Sets the tables and fields that query will select
-func (j *JoinBuilder) JSelect(tableName, targetField string) *JoinBuilder {
-	if tableName == "" && targetField == "" {
-		return j
-	}
-	if tableExists(j.selectedTables, tableName) {
-		j.selectedTables = addTableField(j.selectedTables, tableName, targetField)
-	} else {
-		j.selectedTables = append(j.selectedTables, Table{name: tableName, fields: []string{targetField}})
-	}
+func (j *JoinBuilder) JSelect(tableName string, fields ...string) *JoinBuilder {
+	j.selectedTables = append(j.selectedTables, Table{name: tableName, fields: fields})
 	return j
 }
 
 // Sets the table that query will target
 func (j *JoinBuilder) JFrom(tableName string) *JoinBuilder {
-	if tableName == "" {
-		return j
-	}
 	j.fromTable = tableName
 	return j
 }
 
 // Sets the join table
 func (j *JoinBuilder) Join(typeOfJoin Join, tableName string) *JoinBuilder {
-	if tableName == "" {
-		return j
-	}
-
 	j.typeOfJoin = typeOfJoin
 	j.joinTable = tableName
 	return j
@@ -140,6 +133,7 @@ func (j *JoinBuilder) OnCondition(tableNameA, tableFieldA string, condition Cond
 	return j
 }
 
+// Sets join where clause
 func (j *JoinBuilder) JWhere(tableName, tableField string, condition ConditionToken, value interface{}) *JoinBuilder {
 	var argFormat string
 	switch v := value.(type) {

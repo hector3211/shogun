@@ -58,7 +58,7 @@ func TestDriverUpdate(t *testing.T) {
 }
 
 func TestDriverDelete(t *testing.T) {
-	query := "DELETE users WHERE id = 1 OR name = 'hector' AND verifyEmail = FALSE;"
+	query := "DELETE FROM users WHERE id = 1 OR name = 'hector' AND verifyEmail = FALSE;"
 
 	stmt := POSTGRES.NewDeleteBuilder().Delete("users").Where(
 		Equal("id", 1),

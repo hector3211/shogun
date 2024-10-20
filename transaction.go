@@ -104,7 +104,6 @@ func (t TransactionBuilder) Build() string {
 				buf.WriteLeadingString(query.Build() + " ")
 			} else {
 				buf.WriteString(query.Build())
-
 			}
 		}
 	}

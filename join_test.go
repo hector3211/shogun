@@ -8,9 +8,8 @@ func TestJoinRight(t *testing.T) {
 	query := "SELECT orders.orders_id,orders.orders_date,customers.customers_name FROM orders RIGHT JOIN customers ON orders.customer_id = customers.customers_id AND orders.customer_id != customers.customers_id;"
 
 	stmt := NewJoinBuilder().
-		JSelect("orders", "orders_id").
+		JSelect("orders", "orders_id", "orders_date").
 		JSelect("customers", "customers_name").
-		JSelect("orders", "orders_date").
 		JFrom("orders").
 		Join(RIGHT, "customers").
 		OnCondition("orders", "customer_id", EQUAL, "customers", "customers_id", nil).
@@ -27,8 +26,7 @@ func TestJoinLeft(t *testing.T) {
 	query := "SELECT employees.id,employees.name,departments.name FROM employees LEFT JOIN departments ON employees.department_id = departments.id;"
 
 	stmt := NewJoinBuilder().
-		JSelect("employees", "id").
-		JSelect("employees", "name").
+		JSelect("employees", "id", "name").
 		JSelect("departments", "name").
 		JFrom("employees").
 		Join(LEFT, "departments").
@@ -43,8 +41,7 @@ func TestJoinLeft(t *testing.T) {
 func TestJoinInner(t *testing.T) {
 	query := "SELECT employees.id,employees.name,departments.name FROM employees INNER JOIN departments ON employees.department_id = departments.id;"
 
-	stmt := JSelect("employees", "id").
-		JSelect("employees", "name").
+	stmt := JSelect("employees", "id", "name").
 		JSelect("departments", "name").
 		JFrom("employees").
 		Join(INNER, "departments").
@@ -66,8 +63,7 @@ func TestJoinDriver(t *testing.T) {
 	query := "SELECT employees.id,employees.name,departments.name FROM employees INNER JOIN departments ON employees.department_id = departments.id AND employees.name = 'hector';"
 
 	stmt := SQLITE.NewJoinBuilder().
-		JSelect("employees", "id").
-		JSelect("employees", "name").
+		JSelect("employees", "id", "name").
 		JSelect("departments", "name").
 		JFrom("employees").
 		Join(INNER, "departments").

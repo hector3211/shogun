@@ -3,7 +3,7 @@ package shogun
 import "testing"
 
 func TestDelete(t *testing.T) {
-	query := "DELETE users WHERE id = 1 AND name = 'hector';"
+	query := "DELETE FROM users WHERE id = 1 AND name = 'hector';"
 
 	stmt := Delete("users").Where(Equal("id", 1), And(), Equal("name", "hector")).Build()
 
@@ -13,7 +13,7 @@ func TestDelete(t *testing.T) {
 }
 
 func TestDeleteTwo(t *testing.T) {
-	query := "DELETE users WHERE id = 1 AND name = 'hector' AND verifyEmail = TRUE;"
+	query := "DELETE FROM users WHERE id = 1 AND name = 'hector' AND verifyEmail = TRUE;"
 	stmt := Delete("users").Where(
 		Equal("id", 1),
 		And(),
@@ -37,7 +37,7 @@ func TestDeleteTwo(t *testing.T) {
 }
 
 func TestDeleteThree(t *testing.T) {
-	query := "DELETE users WHERE id = 1 OR name = 'hector' AND verifyEmail = FALSE;"
+	query := "DELETE FROM users WHERE id = 1 OR name = 'hector' AND verifyEmail = FALSE;"
 
 	stmt := NewDeleteBuilder().Delete("users").Where(
 		Equal("id", 1),
