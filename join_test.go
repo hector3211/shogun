@@ -12,9 +12,9 @@ func TestJoinRight(t *testing.T) {
 		JSelect("customers", "customers_name").
 		JFrom("orders").
 		Join(RIGHT, "customers").
-		OnCondition("orders", "customer_id", EQUAL, "customers", "customers_id", nil).
+		OnCondition("orders.customer_id", EQUAL, "customers.customers_id").
 		And().
-		OnCondition("orders", "customer_id", NOTEQUAL, "customers", "customers_id", nil).
+		OnCondition("orders.customer_id", NOTEQUAL, "customers.customers_id").
 		Build()
 
 	if stmt != query {
@@ -30,7 +30,7 @@ func TestJoinLeft(t *testing.T) {
 		JSelect("departments", "name").
 		JFrom("employees").
 		Join(LEFT, "departments").
-		OnCondition("employees", "department_id", EQUAL, "departments", "id", nil).
+		OnCondition("employees.department_id", EQUAL, "departments.id").
 		Build()
 
 	if stmt != query {
@@ -45,14 +45,8 @@ func TestJoinInner(t *testing.T) {
 		JSelect("departments", "name").
 		JFrom("employees").
 		Join(INNER, "departments").
-		OnCondition("employees", "department_id", EQUAL, "departments", "id", nil).
+		OnCondition("employees.department_id", EQUAL, "departments.id").
 		Build()
-
-		// stmtTwo :=  JSelect("users","name").
-		//     JSelect("products","sales_person").
-		//     JFrom("users").
-		//     Join(CROSS, "products").
-		//     OnCondition("users","name", EQUAL, "products", "sales_person","")
 
 	if stmt != query {
 		t.Fatalf("TestJoinInner failed! wanted %s got %s", query, stmt)
@@ -67,9 +61,9 @@ func TestJoinDriver(t *testing.T) {
 		JSelect("departments", "name").
 		JFrom("employees").
 		Join(INNER, "departments").
-		OnCondition("employees", "department_id", EQUAL, "departments", "id", nil).
+		OnCondition("employees.department_id", EQUAL, "departments.id").
 		And().
-		OnCondition("employees", "name", EQUAL, "", "", "hector").
+		OnCondition("employees.name", EQUAL, "hector").
 		Build()
 
 	if stmt != query {

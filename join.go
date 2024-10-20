@@ -111,40 +111,18 @@ func (j *JoinBuilder) Join(typeOfJoin Join, tableName string) *JoinBuilder {
 }
 
 // Loads a query condition
-func (j *JoinBuilder) OnCondition(tableNameA, tableFieldA string, condition ConditionToken, tableNameB, tableFieldB string, arg interface{}) *JoinBuilder {
-	// If no table B provided then we compare with arg
-	if tableNameB == "" && tableFieldB == "" {
-		if arg != nil {
-			var argFormat string
-			switch v := arg.(type) {
-			case string:
-				argFormat = fmt.Sprintf("'%s'", v)
-			case int, float32, float64:
-				argFormat = fmt.Sprintf("%d", v)
-			case bool:
-				argFormat = strings.ToUpper(fmt.Sprintf("%v", v))
-			}
-			j.conditionStmts = append(j.conditionStmts, fmt.Sprintf("%s.%s %s %s", tableNameA, tableFieldA, condition.String(), argFormat))
-			return j
-		}
+func (j *JoinBuilder) OnCondition(fieldA string, condition ConditionToken, arg interface{}) *JoinBuilder {
+	if strings.Contains(arg.(string), ".") {
+		j.conditionStmts = append(j.conditionStmts, fmt.Sprintf("%s %s %s", fieldA, condition.String(), arg))
+	} else {
+		j.conditionStmts = append(j.conditionStmts, fmt.Sprintf("%s %s %s", fieldA, condition.String(), argFormat(arg)))
 	}
-
-	j.conditionStmts = append(j.conditionStmts, fmt.Sprintf("%s.%s %s %s.%s", tableNameA, tableFieldA, condition.String(), tableNameB, tableFieldB))
 	return j
 }
 
 // Sets join where clause
 func (j *JoinBuilder) JWhere(tableName, tableField string, condition ConditionToken, value interface{}) *JoinBuilder {
-	var argFormat string
-	switch v := value.(type) {
-	case string:
-		argFormat = fmt.Sprintf("'%s'", v)
-	case int, float32, float64:
-		argFormat = fmt.Sprintf("%d", v)
-	case bool:
-		argFormat = strings.ToUpper(fmt.Sprintf("%v", v))
-	}
-	j.whereCondition = append(j.whereCondition, fmt.Sprintf("%s.%s %s %s", tableName, tableField, condition.String(), argFormat))
+	j.whereCondition = append(j.whereCondition, fmt.Sprintf("%s.%s %s %s", tableName, tableField, condition.String(), argFormat(value)))
 	return j
 }
 
@@ -259,4 +237,17 @@ func addTableField(table []Table, tableName, newField string) []Table {
 	}
 
 	return table
+}
+
+func argFormat(value interface{}) string {
+	var argFormat string
+	switch v := value.(type) {
+	case string:
+		argFormat = fmt.Sprintf("'%s'", v)
+	case int, float32, float64:
+		argFormat = fmt.Sprintf("%d", v)
+	case bool:
+		argFormat = strings.ToUpper(fmt.Sprintf("%v", v))
+	}
+	return argFormat
 }
