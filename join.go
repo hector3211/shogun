@@ -87,26 +87,26 @@ func newJoinBuilder() *JoinBuilder {
 }
 
 // Sets the tables and fields that query will select returning new instance of JoinBuilder
-func JSelect(tableName string, fields ...string) *JoinBuilder {
-	return newJoinBuilder().JSelect(tableName, fields...)
+func JSelect(table string, fields ...string) *JoinBuilder {
+	return newJoinBuilder().JSelect(table, fields...)
 }
 
 // Sets the tables and fields that query will select
-func (j *JoinBuilder) JSelect(tableName string, fields ...string) *JoinBuilder {
-	j.selectedTables = append(j.selectedTables, Table{name: tableName, fields: fields})
+func (j *JoinBuilder) JSelect(table string, fields ...string) *JoinBuilder {
+	j.selectedTables = append(j.selectedTables, Table{name: table, fields: fields})
 	return j
 }
 
 // Sets the table that query will target
-func (j *JoinBuilder) JFrom(tableName string) *JoinBuilder {
-	j.fromTable = tableName
+func (j *JoinBuilder) JFrom(table string) *JoinBuilder {
+	j.fromTable = table
 	return j
 }
 
 // Sets the join table
-func (j *JoinBuilder) Join(typeOfJoin Join, tableName string) *JoinBuilder {
+func (j *JoinBuilder) Join(typeOfJoin Join, table string) *JoinBuilder {
 	j.typeOfJoin = typeOfJoin
-	j.joinTable = tableName
+	j.joinTable = table
 	return j
 }
 
@@ -121,8 +121,8 @@ func (j *JoinBuilder) OnCondition(fieldA string, condition ConditionToken, arg i
 }
 
 // Sets join where clause
-func (j *JoinBuilder) JWhere(tableName, tableField string, condition ConditionToken, value interface{}) *JoinBuilder {
-	j.whereCondition = append(j.whereCondition, fmt.Sprintf("%s.%s %s %s", tableName, tableField, condition.String(), argFormat(value)))
+func (j *JoinBuilder) JWhere(table, field string, condition ConditionToken, value interface{}) *JoinBuilder {
+	j.whereCondition = append(j.whereCondition, fmt.Sprintf("%s.%s %s %s", table, field, condition.String(), argFormat(value)))
 	return j
 }
 
