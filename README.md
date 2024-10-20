@@ -129,9 +129,9 @@ stmt := NewJoinBuilder().
     JSelect("orders", "orders_date").
     JFrom("orders").
     Join(RIGHT, "customers").
-    OnCondition("orders", "customer_id", EQUAL, "customers", "customers_id", nil).
+    OnCondition("orders.customer_id", EQUAL, "customers.customers_id").
     And().
-    OnCondition("orders", "customer_id", NOTEQUAL, "customers", "customers_id", nil)
+    OnCondition("orders.customer_id", NOTEQUAL, "customers.customers_id")
 
 fmt.Println(stmt.Build())
 // OUTPUT
@@ -146,9 +146,9 @@ stmtTwo := NewJoinBuilder().
     JSelect("departments", "name").
     JFrom("employees").
     Join(INNER, "departments").
-    OnCondition("employees", "department_id", EQUAL, "departments","id", nil).
+    OnCondition("employees.department_id", EQUAL, "departments.id").
     And().
-    OnCondition("employees", "name", EQUAL, "", "", "john")
+    OnCondition("employees.name", EQUAL,"john")
 
 fmt.Println(stmtTwo.Build())
 // OUTPUT
