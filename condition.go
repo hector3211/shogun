@@ -13,6 +13,8 @@ const (
 	LESSTHAN
 	GREATERTHAN
 	BETWEEN
+	ISNULL
+	NOTNULL
 )
 
 func (c ConditionToken) String() string {
@@ -27,6 +29,10 @@ func (c ConditionToken) String() string {
 		return ">"
 	case BETWEEN:
 		return "BETWEEN"
+	case ISNULL:
+		return "IS NULL"
+	case NOTNULL:
+		return "IS NOT NULL"
 	default:
 		return ""
 	}
@@ -81,6 +87,14 @@ func (c Conditions) Between(field string, value interface{}) string {
 	return stringifyStatement(field, BETWEEN, value, nil)
 }
 
+func (c Conditions) IsNull(field string) string {
+	return stringifyStatement(field, ISNULL, nil, nil)
+}
+
+func (c Conditions) IsNOTNull(field string) string {
+	return stringifyStatement(field, NOTNULL, nil, nil)
+}
+
 func (c Conditions) And() string {
 	buf := newStringBuilder()
 	buf.WriteString("AND")
@@ -111,6 +125,14 @@ func GreaterThan(field string, value interface{}) string {
 
 func Between(field string, value interface{}) string {
 	return stringifyStatement(field, BETWEEN, value, nil)
+}
+
+func IsNull(field string) string {
+	return stringifyStatement(field, ISNULL, nil, nil)
+}
+
+func IsNotNull(field string) string {
+	return stringifyStatement(field, NOTNULL, nil, nil)
 }
 
 func Sum(field string, condition ConditionToken, value interface{}) string {
@@ -148,7 +170,7 @@ func stringifyStatement(field string, condition ConditionToken, value interface{
 			strBool := fmt.Sprintf("%v", value)
 			buf.WriteString(fmt.Sprintf("%s %s %s", field, condition.String(), strings.ToUpper(strBool)))
 		default:
-			buf.WriteString(fmt.Sprintf("%s %s %v", field, condition.String(), value))
+			buf.WriteString(fmt.Sprintf("%s %s", field, condition.String()))
 		}
 	} else {
 		switch value.(type) {

@@ -153,5 +153,24 @@ func TestSelectGroubyAndHaving(t *testing.T) {
 	if stmt.Build() != query {
 		t.Fatalf("TestSelectGroubyAndHaving failed! wanted %s got %s", query, stmt.Build())
 	}
+}
 
+func TestSelectIsNull(t *testing.T) {
+	query := "SELECT id,name FROM users WHERE name IS NULL;"
+	stmt := NewSelectBuilder().Select("id", "name").From("users").Where(
+		IsNull("name"),
+	).Build()
+	if stmt != query {
+		t.Fatalf("TestSelectIsNull failed wanted %s got %s", query, stmt)
+	}
+}
+
+func TestSelectIsNotNull(t *testing.T) {
+	query := "SELECT id,name FROM users WHERE name IS NOT NULL;"
+	stmt := NewSelectBuilder().Select("id", "name").From("users").Where(
+		IsNotNull("name"),
+	).Build()
+	if stmt != query {
+		t.Fatalf("TestSelectIsNull failed wanted %s got %s", query, stmt)
+	}
 }
